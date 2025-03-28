@@ -1,0 +1,27 @@
+
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% block css %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <style>
+    .dynamic-text {
+        display: flex;
+        justify-content: center; /* Center secara horizontal */
+        align-items: center;    /* Center secara vertikal */
+        text-align: center;     /* Text alignment */
+        font-size: calc(1.5rem + 1vw); /* Ukuran teks dinamis */
+        color: #000000;               /* Warna hijau sesuai tema "success" */
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+
+
+{% endblock %}
+

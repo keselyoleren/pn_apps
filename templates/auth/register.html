@@ -1,0 +1,98 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Sign Up | Jetty Pertamina</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{% static 'sb/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link href="{% static 'sb/css/sb-admin-2.min.css'%}" rel="stylesheet">
+    <link href="{% static 'sb/vendor/datatables/dataTables.bootstrap4.min.css'%}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.6/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <!-- DateTimePicker JS -->
+    
+
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+            <div class="col-xl-5 col-lg-7">
+                <div class="card o-hidden border-0 shadow mb-4 my-5">
+                    <div class="card-body">
+                        <div class="p-5">
+                            <div class="text-center">
+                                {% comment %} <img class="sidebar-card-illustration mb-2" src="" width="175" alt="..."> {% endcomment %}
+                                <h1 class="h4 text-gray-900">Login</h1>
+                            </div>
+                            <form method="POST" action=".">
+                                {% csrf_token %}
+                                <tr><th><label for="id_username">Username:</label></th><td><input type="text" name="username" autofocus class="form-control" autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username"></td></tr><br>
+                                <tr><th><label for="id_email">Email:</label></th><td><input type="email" name="email" autofocus class="form-control" autocapitalize="none" autocomplete="Email" maxlength="150" required id="id_email"></td></tr><br>
+                                <tr><th><label for="id_password1">Password:</label></th><td><input type="password" name="password1" autocomplete="current-password" class="form-control" pnameholder="Password" required id="id_password1"></td></tr><br>
+                                <tr><th><label for="id_password2">Validate Password:</label></th><td><input type="password" name="password2" autocomplete="current-password" class="form-control" pnameholder="validate Password" required id="id_password2"></td></tr><br>
+                                <tr><th><label for="kode_puskeswan">Kode Puskeswan:</label></th><td><input type="text" name="puskeswan_code"  class="form-control" pnameholder="kode puskeswan" required id="id_password"></td></tr>
+                                <br>
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary btn-user btn-block">Sign Up</button>
+                                </div>
+                            </form>
+                            <hr>
+                            <div class="text-center">
+                                <a class="small" href="{% url 'login' %}">Login?</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'sb/vendor/jquery/jquery.min.js'%}"></script>
+    <script src="{% static 'sb/vendor/bootstrap/js/bootstrap.bundle.min.js'%}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'sb/vendor/jquery-easing/jquery.easing.min.js'%}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'sb/js/sb-admin-2.min.js'%}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.6/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    {% if messages %}
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                {% for message in messages %}
+                    swal.fire('{{ message.tags }}', '{{ message }}', '{{ message.tags }}');
+                {% endfor %}
+            });
+        </script>
+    {% endif %}
+
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+
+{% block content %}
+    <!-- Page Heading -->
+    {% include 'component/content_header.html' %}
+    
+    <div class="row">
+        <div class="col">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{{ header_title }}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-striped table-bordered"
+                           data-toggle="data-table">
+                           <thead>
+                              <tr>
+                                 <th>Nik</th>
+                                 <th>Email</th>
+                                 <th>Nama</th>
+                                 <th>Tgl Lahir</th>
+                                 <th>Action</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                            {% for item in list_members %}
+                                <tr role="row" class="even">
+                                    <td>{{item.nik}}</td>
+                                    <td>{{item.email}}</td>
+                                    <td>{{item.nama}}</td>
+                                    <td>{{item.tgl_lahir}}</td>
+                                    <td>
+                                        <a class="btn btn-outline-info" href="{% url 'member-update' item.id  %}"><i class="fa fa-edit"></i></a>
+                                        <a class="btn btn-outline-danger" href="{% url 'member-delete' item.id  %}"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        </table>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock  %}

@@ -1,0 +1,102 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% block css %}{{ form.media.css }}{% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{{ header }}</h1>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{{ header_title }}</h6>
+                </div>
+                <div class="card-body">
+                    <form action="." method="POST" id="myForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12 col-lg-9">
+                                
+                                {% for fields in form.visible_fields %}
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-sm-2 text-left text-gray-800"
+                                            for="{{ fields.label_tag.id }}">
+                                            <h6>
+                                                {{ fields.label_tag }}
+                                                {% if fields.field.required %}
+                                                    <span class="text-red" style="color: red;">*</span>
+                                                {% endif %}
+                                            </h6>
+                                        </label>
+
+                                        <div class="col-sm-10">
+                                            {{ fields.help_text }}
+                                            <span class="text-red">
+                                                {{ fields.errors }}
+                                            </span>
+                                            {{ fields }}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                
+                            </div>
+                            <!-- action -->
+                            <div class="col-12 col-lg-3">
+                                <div class="card card-primary card-outline">
+                                    <div class="card-header">
+                                        <h3 class="card-title">
+                                            <i class="fas fa-edit"></i>
+                                            Actions
+                                        </h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <input type="submit"
+                                                value="Save"
+                                                class="btn btn-outline-success
+                                                form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if is_profile %}
+                                    <img src="{{ request.user.profile_picture.url }}"class="img-thumbnail">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+{% endblock  %}
+
+{% block js %}
+{{ form.media.js }}
+<script>
+    const form = document.getElementById('myForm');
+    const role_user = document.getElementById('id_role_user');
+    const jabatan = document.getElementById('id_jabatan')
+    const customer = document.getElementById('id_customer')
+
+    form.addEventListener('change', function() {
+        const selectedOption = role_user.options[role_user.selectedIndex].value;
+        
+        if (selectedOption === 'customer') {
+            jabatan.disabled = true;
+        } else {
+            customer.disabled = false;
+            jabatan.disabled = false;
+        }
+
+    });
+
+</script>
+{% endblock %}
+
