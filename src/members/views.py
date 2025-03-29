@@ -37,7 +37,7 @@ class MembersCreateView(CreateView):
         response =  super().form_valid(form)
         email = form.cleaned_data.get('email')
         member, created = Members.objects.get_or_create(
-            Membername=email, 
+            username=email, 
             role=RoleUser.MEMBER,
             defaults={'email': email}
         )
