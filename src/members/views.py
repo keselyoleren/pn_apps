@@ -7,6 +7,7 @@ from config.choice import RoleUser
 from config.permis import IsPublicAuth, IsLoginAuthenticated, LoginRequiredMixin
 from members.forms import MembersForm
 from members.models import Members
+from users.models import AccountUser
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
@@ -24,7 +25,7 @@ class MembersCreateView(CreateView):
     model = Members
     template_name = 'members/register.html'
     form_class = MembersForm
-    success_url = reverse_lazy('members-register')  
+    success_url = reverse_lazy('login')  
 
     
     def get_context_data(self, **kwargs):
@@ -36,14 +37,14 @@ class MembersCreateView(CreateView):
     def form_valid(self, form):
         response =  super().form_valid(form)
         email = form.cleaned_data.get('email')
-        member, created = Members.objects.get_or_create(
+        member, created = AccountUser.objects.get_or_create(
             username=email, 
             role=RoleUser.MEMBER,
             defaults={'email': email}
         )
-        self.object.Member = member
+        self.object.member = member
         self.object.save()
-        messages.success(self.request, "Anggota berhasil didaftarkan hubungi admin wilayah untuk pengecekan!")
+        messages.success(self.request, "Anggota berhasil didaftarkan hubungi admin wilayah untuk pengecekan dan setting password!")
         return response
 
 class MembersListView(IsPublicAuth, ListView):
