@@ -11,7 +11,6 @@ from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
 
-
 class IndexPage(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
 
@@ -37,12 +36,12 @@ class MembersCreateView(CreateView):
     def form_valid(self, form):
         response =  super().form_valid(form)
         email = form.cleaned_data.get('email')
-        Member, created = Members.objects.get_or_create(
+        member, created = Members.objects.get_or_create(
             Membername=email, 
             role=RoleUser.MEMBER,
             defaults={'email': email}
         )
-        self.object.Member = Member
+        self.object.Member = member
         self.object.save()
         messages.success(self.request, "Anggota berhasil didaftarkan hubungi admin wilayah untuk pengecekan!")
         return response
@@ -56,16 +55,23 @@ class MembersListView(IsPublicAuth, ListView):
         user_wilayah = self.request.user.wilayah
         if self.request.user.is_superuser:
             return Members.objects.all()
+        if self.request.user.role == RoleUser.MEMBER:
+            return Members.objects.filter(user=self.request.user)
         return Members.objects.filter(kecamatan=user_wilayah)
 
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['header'] = 'Member'
-        context['header_title'] = 'List Member'
-        context['btn_add'] = True
-
-        context['create_url'] = reverse_lazy('member-create')
+        if self.request.user.role == RoleUser.MEMBER:
+            context = super().get_context_data(**kwargs)
+            context['header'] = 'Data diri'
+            context['header_title'] = 'Data diri'
+            context['btn_add'] = False
+        else:
+            context = super().get_context_data(**kwargs)
+            context['header'] = 'Member'
+            context['header_title'] = 'List Member'
+            context['btn_add'] = True
+            context['create_url'] = reverse_lazy('member-create')
         return context
 
 
@@ -77,8 +83,12 @@ class MembersUpdateView(IsPublicAuth, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['header'] = 'Member'
-        context['header_title'] = 'Edit Member'
+        if self.request.user.role == RoleUser.MEMBER:
+            context['header'] = 'Data diri'
+            context['header_title'] = 'Edit data diri'
+        else:
+            context['header'] = 'Member'
+            context['header_title'] = 'Edit Member'
         return context
 
 class MembersDeleteView(IsPublicAuth, DeleteView):

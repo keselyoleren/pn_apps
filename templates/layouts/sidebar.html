@@ -27,7 +27,11 @@
         
         <a class="nav-link" href="{% url 'member-list' %}">
             <i class="fas fa-fw fa-users"></i>
-            <span>Anngota</span></a>
+            {% if request.user.role == 'member' %}
+                <span>Data diri</span></a>
+            {% else %}
+                <span>Anngota</span></a>
+            {% endif %}
     </li>
     
     
