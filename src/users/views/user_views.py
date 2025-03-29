@@ -27,7 +27,7 @@ class AccountUserListView(IsAuthenticated, ListView):
 
 class AccountUserCreateView(IsAuthenticated, CreateView):
     model = AccountUser
-    template_name = 'component/form.html'
+    template_name = 'users/form.html'
     form_class = AccountUserForm
     success_url = reverse_lazy('user-list')
 
@@ -42,7 +42,7 @@ class AccountUserCreateView(IsAuthenticated, CreateView):
 
 class AccountUserUpdateView(IsAuthenticated, UpdateView):
     model = AccountUser
-    template_name = 'component/form.html'
+    template_name = 'users/form.html'
     form_class = UserForm
     success_url = reverse_lazy('user-list')
 

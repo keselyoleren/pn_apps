@@ -19,11 +19,12 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from members.views import IndexPage, MembersCreateView
+from members.views import IndexPage, MembersCreateView, anggota_stats
 from users.views.login_views import ChangePasswordAdminView, CustomPasswordChangeView, LogoutView, ProfileUserApiView, UserLoginView
 
 urlpatterns = [
     path("", IndexPage.as_view()),
+    path('api/anggota-stats/', anggota_stats, name='anggota_stats'),
     path("form-daftar/", MembersCreateView.as_view(), name="members-register"),
     path("admin/", admin.site.urls),
     path("", include('users.urls'), name="users"),

@@ -8,7 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
+    <link rel="icon" type="image/png" href="https://salam.pagarnusa.or.id/favicon-16x16.png">
+    <link rel="icon" type="image/png" href="https://salam.pagarnusa.or.id/favicon-32x32.png">
     <title>Register Anggota</title>
 
     <link href="{% static 'sb/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
@@ -17,7 +18,9 @@
     <link href="{% static 'sb/vendor/datatables/dataTables.bootstrap4.min.css'%}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.6/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" rel="stylesheet" />
+
 </head>
 
 <body class="">
@@ -59,8 +62,16 @@
                                                         {{ fields.errors }}
                                                     </span>
                                                 {% endif %}
-                                                
-                                                {{ fields }}
+                                                {% if fields.name == 'provinsi' or fields.name == 'kabupaten' or fields.name == 'kecamatan' or fields.name == 'kelurahan' %}
+                                                <!-- Special handling for kecamatan field -->
+                                                    <select name="{{ fields.name }}" id="id_{{ fields.name }}" class="form-control select2-kecamatan" style="width: 100%;">
+                                                        {% if fields.value %}
+                                                            <option value="{{ fields.value }}" selected>{{ fields.value }}</option>
+                                                        {% endif %}
+                                                    </select>
+                                                {% else %}
+                                                    {{ fields }}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
@@ -85,6 +96,175 @@
     <script src="{% static 'sb/vendor/jquery-easing/jquery.easing.min.js'%}"></script>
     <script src="{% static 'sb/js/sb-admin-2.min.js'%}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.6/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+
+    <!-- Script untuk form wilayah bertingkat -->
+    <script>
+        $(document).ready(function() {
+        // Initialize Select2 with proper configuration
+        function initializeSelect2() {
+            $('#id_provinsi, #id_kabupaten, #id_kecamatan, #id_kelurahan').select2({
+                theme: 'bootstrap', // Optional: matches Bootstrap theme
+                width: '100%',     // Make it full width
+                placeholder: function() {
+                    return $(this).data('placeholder') || '-- Pilih --';
+                },
+                allowClear: true
+            });
+        }
+
+        // API endpoint
+        const API_URL = 'https://www.emsifa.com/api-wilayah-indonesia/api/';
+        
+        // Object to store current IDs for API calls
+        const currentIds = {
+            province: null,
+            regency: null,
+            district: null
+        };
+
+        // First initialize Select2
+        initializeSelect2();
+
+        // Then load provinces
+        $.get(API_URL + 'provinces.json', function(data) {
+            $('#id_provinsi').empty().append('<option value="">-- Pilih Provinsi --</option>');
+            $.each(data, function(index, province) {
+                $('#id_provinsi').append(`<option data-id="${province.id}" value="${province.name}">${province.name}</option>`);
+            });
+            
+            // Reinitialize Select2 after loading options
+            $('#id_provinsi').select2('destroy').select2({
+                theme: 'bootstrap',
+                width: '100%',
+                placeholder: '-- Pilih Provinsi --',
+                allowClear: true
+            });
+            
+            // Set initial value if exists
+            const initialProvince = "{{ form.provinsi.value }}";
+            if (initialProvince) {
+                $('#id_provinsi').val(initialProvince).trigger('change');
+            }
+        });
+
+        // ... [rest of your existing code] ...
+        
+        // Reinitialize Select2 whenever new options are loaded
+        function loadRegencies(provinceId) {
+            $('#id_kabupaten').empty().append('<option value="">-- Pilih Kabupaten/Kota --</option>').prop('disabled', false);
+            $.get(API_URL + `regencies/${provinceId}.json`, function(data) {
+                $.each(data, function(index, regency) {
+                    $('#id_kabupaten').append(`<option data-id="${regency.id}" value="${regency.name}">${regency.name}</option>`);
+                });
+                
+                // Reinitialize Select2 after loading options
+                $('#id_kabupaten').select2('destroy').select2({
+                    theme: 'bootstrap',
+                    width: '100%',
+                    placeholder: '-- Pilih Kabupaten/Kota --',
+                    allowClear: true
+                });
+                
+                // Set initial value if exists
+                const initialRegency = "{{ form.kabupaten.value }}";
+                if (initialRegency) {
+                    $('#id_kabupaten').val(initialRegency).trigger('change');
+                }
+            });
+        }
+        
+        // Similar reinitialization for districts and villages
+        function loadDistricts(regencyId) {
+            $('#id_kecamatan').empty().append('<option value="">-- Pilih Kecamatan --</option>').prop('disabled', false);
+            $.get(API_URL + `districts/${regencyId}.json`, function(data) {
+                $.each(data, function(index, district) {
+                    $('#id_kecamatan').append(`<option data-id="${district.id}" value="${district.name}">${district.name}</option>`);
+                });
+                
+                $('#id_kecamatan').select2('destroy').select2({
+                    theme: 'bootstrap',
+                    width: '100%',
+                    placeholder: '-- Pilih Kecamatan --',
+                    allowClear: true
+                });
+                
+                const initialDistrict = "{{ form.kecamatan.value }}";
+                if (initialDistrict) {
+                    $('#id_kecamatan').val(initialDistrict).trigger('change');
+                }
+            });
+        }
+        
+        function loadVillages(districtId) {
+            $('#id_kelurahan').empty().append('<option value="">-- Pilih Kelurahan/Desa --</option>').prop('disabled', false);
+            $.get(API_URL + `villages/${districtId}.json`, function(data) {
+                $.each(data, function(index, village) {
+                    $('#id_kelurahan').append(`<option value="${village.name}">${village.name}</option>`);
+                });
+                
+                $('#id_kelurahan').select2('destroy').select2({
+                    theme: 'bootstrap',
+                    width: '100%',
+                    placeholder: '-- Pilih Kelurahan/Desa --',
+                    allowClear: true
+                });
+                
+                const initialVillage = "{{ form.kelurahan.value }}";
+                if (initialVillage) {
+                    $('#id_kelurahan').val(initialVillage).trigger('change');
+                }
+            });
+        }
+        
+        // Update your change handlers to use these functions
+        $('#id_provinsi').change(function() {
+            const selectedOption = $(this).find('option:selected');
+            const provinceId = selectedOption.data('id');
+            currentIds.province = provinceId;
+            
+            if (provinceId) {
+                loadRegencies(provinceId);
+            } else {
+                $('#id_kabupaten, #id_kecamatan, #id_kelurahan').empty()
+                    .append('<option value="">-- Pilih --</option>')
+                    .prop('disabled', true);
+                currentIds.regency = null;
+                currentIds.district = null;
+            }
+        });
+        
+        $('#id_kabupaten').change(function() {
+            const selectedOption = $(this).find('option:selected');
+            const regencyId = selectedOption.data('id');
+            currentIds.regency = regencyId;
+            
+            if (regencyId) {
+                loadDistricts(regencyId);
+            } else {
+                $('#id_kecamatan, #id_kelurahan').empty()
+                    .append('<option value="">-- Pilih --</option>')
+                    .prop('disabled', true);
+                currentIds.district = null;
+            }
+        });
+        
+        $('#id_kecamatan').change(function() {
+            const selectedOption = $(this).find('option:selected');
+            const districtId = selectedOption.data('id');
+            currentIds.district = districtId;
+            
+            if (districtId) {
+                loadVillages(districtId);
+            } else {
+                $('#id_kelurahan').empty()
+                    .append('<option value="">-- Pilih --</option>')
+                    .prop('disabled', true);
+            }
+        });
+    });
+    </script>
 
     {% if messages %}
     <script>
@@ -102,25 +282,5 @@
         });
     </script>
     {% endif %}
-
-    <!-- Success message after form submission -->
-    <script>
-        $(document).ready(function() {
-            // Check if form was submitted successfully
-            if(window.location.search.includes('success=true')) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Data anggota berhasil disimpan!',
-                    icon: 'success',
-                    confirmButtonText: 'OK',
-                    timer: 5000,
-                    timerProgressBar: true
-                }).then(() => {
-                    // Remove the success parameter from URL
-                    history.replaceState(null, '', window.location.pathname);
-                });
-            }
-        });
-    </script>
 </body>
 </html>

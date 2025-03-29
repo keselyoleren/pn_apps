@@ -11,6 +11,39 @@ from users.models import AccountUser
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
+from django.db.models import Count
+from django.http import JsonResponse
+
+def anggota_stats(request):
+    # Data untuk card summary
+    total_anggota = Members.objects.count()
+    anggota_laki = Members.objects.filter(jenis_kelamin='L').count()
+    anggota_perempuan = Members.objects.filter(jenis_kelamin='P').count()
+    
+    # Data untuk grafik
+    kecamatan_data = Members.objects.exclude(kecamatan__isnull=True)\
+                                  .exclude(kecamatan__exact='')\
+                                  .values('kecamatan')\
+                                  .annotate(total=Count('id'))\
+                                  .order_by('-total')[:10]  # Ambil 10 teratas
+    
+    labels = [item['kecamatan'] for item in kecamatan_data]
+    values = [item['total'] for item in kecamatan_data]
+    
+    # Data untuk pie chart jenis kelamin
+    gender_data = {
+        'labels': ['Laki-laki', 'Perempuan'],
+        'data': [anggota_laki, anggota_perempuan]
+    }
+    
+    return JsonResponse({
+        'total_anggota': total_anggota,
+        'gender_data': gender_data,
+        'kecamatan_data': {
+            'labels': labels,
+            'data': values
+        }
+    })
 
 class IndexPage(LoginRequiredMixin, TemplateView):
     template_name = 'index.html'
@@ -46,6 +79,22 @@ class MembersCreateView(CreateView):
         self.object.save()
         messages.success(self.request, "Anggota berhasil didaftarkan hubungi admin wilayah untuk pengecekan dan setting password!")
         return response
+
+class MemebersAdminCreateView(IsPublicAuth, CreateView):
+    model = Members
+    template_name = 'component/form.html'
+    form_class = MembersForm
+    success_url = reverse_lazy('member-list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['header'] = 'Member'
+        context['header_title'] = 'Add Member'
+        return context
+
+    def form_valid(self, form):
+        return  super().form_valid(form)
+        
 
 class MembersListView(IsPublicAuth, ListView):
     model = Members
@@ -102,3 +151,8 @@ class MembersDeleteView(IsPublicAuth, DeleteView):
         context['header'] = 'Member'
         context['header_title'] = 'Delete Member'
         return context
+
+def get_wilayah(request):
+    kecamatan = request.GET.get('kecamatan')
+    wilayah = Members.objects.filter(kecamatan=kecamatan).order_by('kelurahan').values('kelurahan').distinct()
+    return render(request, 'component/wilayah.html', {'wilayah': wilayah})

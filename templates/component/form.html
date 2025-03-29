@@ -79,24 +79,5 @@
 
 {% block js %}
 {{ form.media.js }}
-<script>
-    const form = document.getElementById('myForm');
-    const role_user = document.getElementById('id_role_user');
-    const jabatan = document.getElementById('id_jabatan')
-    const customer = document.getElementById('id_customer')
-
-    form.addEventListener('change', function() {
-        const selectedOption = role_user.options[role_user.selectedIndex].value;
-        
-        if (selectedOption === 'customer') {
-            jabatan.disabled = true;
-        } else {
-            customer.disabled = false;
-            jabatan.disabled = false;
-        }
-
-    });
-
-</script>
 {% endblock %}
 
