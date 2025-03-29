@@ -88,8 +88,8 @@ class MemebersAdminCreateView(IsPublicAuth, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['header'] = 'Member'
-        context['header_title'] = 'Add Member'
+        context['header'] = 'Anngota'
+        context['header_title'] = 'Add Anggota'
         return context
 
     def form_valid(self, form):
@@ -111,17 +111,27 @@ class MembersListView(IsPublicAuth, ListView):
 
     
     def get_context_data(self, **kwargs):
-        if self.request.user.role == RoleUser.MEMBER:
-            context = super().get_context_data(**kwargs)
-            context['header'] = 'Data diri'
-            context['header_title'] = 'Data diri'
-            context['btn_add'] = False
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        
+        if user.role == RoleUser.MEMBER:
+            context.update({
+                'header': 'Data diri',
+                'header_title': 'Data diri',
+                'btn_add': False
+            })
         else:
-            context = super().get_context_data(**kwargs)
-            context['header'] = 'Member'
-            context['header_title'] = 'List Member'
-            context['btn_add'] = True
-            context['create_url'] = reverse_lazy('member-create')
+            header_title = 'List Anggota'
+            if not user.is_superuser and user.role == RoleUser.ADMIN:
+                header_title = f'List Anggota wilayah {user.wilayah}'
+                
+            context.update({
+                'header': 'Anggota',
+                'header_title': header_title,
+                'btn_add': True,
+                'create_url': reverse_lazy('member-create')
+            })
+        
         return context
 
 
@@ -137,8 +147,8 @@ class MembersUpdateView(IsPublicAuth, UpdateView):
             context['header'] = 'Data diri'
             context['header_title'] = 'Edit data diri'
         else:
-            context['header'] = 'Member'
-            context['header_title'] = 'Edit Member'
+            context['header'] = 'Anggota'
+            context['header_title'] = 'Edit Anggota'
         return context
 
 class MembersDeleteView(IsPublicAuth, DeleteView):
@@ -148,8 +158,8 @@ class MembersDeleteView(IsPublicAuth, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['header'] = 'Member'
-        context['header_title'] = 'Delete Member'
+        context['header'] = 'Anggota'
+        context['header_title'] = 'Delete Anggota'
         return context
 
 def get_wilayah(request):
