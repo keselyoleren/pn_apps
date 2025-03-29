@@ -1,5 +1,8 @@
 /venv/
 venv
+media
+/media/
+media/
 .__pycache__/
 __pycache__
 __pycache__/
