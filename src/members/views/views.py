@@ -74,6 +74,7 @@ class MembersCreateView(CreateView):
         user, created = AccountUser.objects.get_or_create(
             username=nik, 
             email=email,
+            first_name=form.cleaned_data.get('nama'),
             role=RoleUser.MEMBER,
             kabupaten=form.cleaned_data.get('kabupaten'),
             wilayah=form.cleaned_data.get('kecamatan'),

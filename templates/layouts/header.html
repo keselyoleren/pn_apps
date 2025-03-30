@@ -5,8 +5,6 @@
         <i class="fa fa-bars"></i>
     </button>
 
-    
-
     <!-- Topbar Navbar -->
     <ul class="navbar-nav ml-auto">
 
@@ -34,16 +32,33 @@
             </div>
         </li>
 
-
         <!-- Nav Item - User Information -->
         {% if request.user.is_authenticated %}
         <div class="topbar-divider d-none d-sm-block"></div>
         
-        <li class="nav-item dropdown no-arrow">
+        <li class="nav-item dropdown no-arrow d-flex align-items-center">
+            <!-- Role Label -->
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                {% if request.user.role %}
+                    <span class="badge 
+                        {% if request.user.role == 'admin' %}badge-danger
+                        {% elif request.user.role == 'pac' %}badge-warning
+                        {% elif request.user.role == 'member' %}badge-primary
+                        {% else %}badge-secondary{% endif %}
+                        p-2" style="font-size: 0.8rem;">
+                        {{ request.user.role|upper }}
+                    </span>
+                {% endif %}
+            </span>
+            
+            <!-- Username with Dropdown -->
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ request.user.username }}</span>
+                <span class="d-none d-lg-inline text-gray-600 small">
+                    {{ request.user.first_name }}
+                </span>
             </a>
+            
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                 aria-labelledby="userDropdown">
