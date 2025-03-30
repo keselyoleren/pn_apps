@@ -3,24 +3,18 @@ from django.db.models import TextChoices
 class RoleUser(TextChoices):
     ADMIN = 'admin'
     MEMBER = 'member'
+    PAC = 'pac'
     
-class ThreadResult(TextChoices):
-    OK = 'OK'
-    ALREADY_RUN = 'ALREADY_RUN'
-    ERROR = 'ERROR'
-    INFO = 'INFO'
+class Tingkat(TextChoices):
+    PUTIH  = 'putih'
+    KUNING = 'kuning'
+    MERAH = 'merah'
+    BIRU = 'biru'
+    COKLAT = 'coklat'
+    HITAM = 'hitam'
 
-
-class StatusVessel(TextChoices):
-    SCHEDULED = 'Scheduled'
-    BERTHING = 'Berthing'
-    PUMPING = 'Pumping'
-    FINISHED = 'Finished'
-
-class StatusJettyLog(TextChoices):
-    OPEN = 'Open'
-    CLOSE = 'Close'
-
-class Actifity(TextChoices):
-    LOADING = 'Loading'
-    DISCHARGING = 'Discharging'
+class Status(TextChoices):
+    MENUNGGU = 'menunggu'
+    DISETUJUI_ADMIN_WILAYAH = 'disetujui admin wilayah'
+    DISETUJUI_ADMIN_PAC = 'disetujui admin pac'
+    DITOLAK = 'ditolak'

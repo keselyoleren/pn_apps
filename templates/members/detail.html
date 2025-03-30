@@ -1,0 +1,190 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% block css %}
+<style>
+    .img-popup {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .img-popup:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        opacity: 0.9;
+    }
+    .img-thumbnail {
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 0.25rem;
+        background-color: #f8f9fa;
+    }
+    #modalImage {
+        max-height: 80vh;
+        width: auto;
+    }
+    .badge.bg-brown {
+        background-color: #8B4513;
+        color: white;
+    }
+    .member-detail-table th {
+        width: 30%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <!-- Page Heading -->
+    {% include 'component/content_header.html' %}
+    
+    <div class="row">
+        <div class="col">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold text-primary">Detail Anggota</h6>
+                    <div>
+                        <a href="{% url 'member-update' member.id %}" class="btn btn-sm btn-info">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'member-list' %}" class="btn btn-sm btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Kembali
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-3 text-center">
+                            {% if member.pas_photo %}
+                                <img src="{{ member.pas_photo.url }}" 
+                                     class="img-thumbnail img-popup mb-3" 
+                                     style="max-width: 200px; cursor: pointer;" 
+                                     data-bs-toggle="modal" 
+                                     data-bs-target="#imageModal"
+                                     data-image-src="{{ member.pas_photo.url }}">
+                            {% else %}
+                                <div class="img-thumbnail" style="width: 200px; height: 250px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                    <span class="text-muted">No photo</span>
+                                </div>
+                            {% endif %}
+                            <h5 class="mt-2">{{ member.nama }}</h5>
+                            <p class="text-muted">{{ member.nik }}</p>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="table-responsive">
+                                <table class="table table-bordered member-detail-table">
+                                    <tr>
+                                        <th>NIK</th>
+                                        <td>{{ member.nik }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Email</th>
+                                        <td>{{ member.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tempat/Tanggal Lahir</th>
+                                        <td>{{ member.tempat_lahir }}, {{ member.tgl_lahir|date:"d F Y" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Jenis Kelamin</th>
+                                        <td>{{ member.get_jenis_kelamin_display }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Nomor HP</th>
+                                        <td>{{ member.no_hp|default:"-" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Tahun Bergabung</th>
+                                        <td>{{ member.thn_gabung|date:"d F Y"|default:"-" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Lokasi Latihan</th>
+                                        <td>{{ member.lokasi|default:"-" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Unit Latihan</th>
+                                        <td>{{ member.unit_latihan|default:"-" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Alamat</th>
+                                        <td>
+                                            {% if member.kelurahan or member.kecamatan or member.kabupaten or member.provinsi %}
+                                                {{ member.kelurahan|default:"" }}, {{ member.kecamatan|default:"" }}, 
+                                                {{ member.kabupaten|default:"" }}, {{ member.provinsi|default:"" }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>KTP</th>
+                                        <td>
+                                            {% if member.ktp %}
+                                                <img src="{{ member.ktp.url }}" 
+                                                     class="img-thumbnail img-popup" 
+                                                     style="max-width: 200px; cursor: pointer;" 
+                                                     data-bs-toggle="modal" 
+                                                     data-bs-target="#imageModal"
+                                                     data-image-src="{{ member.ktp.url }}">
+                                            {% else %}
+                                                <div class="img-thumbnail" style="width: 200px; height: 150px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                                    <span class="text-muted">No image</span>
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk menampilkan gambar -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Preview Gambar</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="" id="modalImage" class="img-fluid">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<!-- Load Bootstrap JS dari CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Menggunakan event listener untuk modal show event
+    document.addEventListener('DOMContentLoaded', function() {
+        var imageModal = document.getElementById('imageModal');
+        
+        imageModal.addEventListener('show.bs.modal', function (event) {
+            // Button that triggered the modal
+            var button = event.relatedTarget;
+            // Extract info from data-image-src attribute
+            var imageSrc = button.getAttribute('data-image-src');
+            // Update the modal's content
+            var modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+            
+            // Update modal title based on which image is being shown
+            var modalTitle = document.getElementById('imageModalLabel');
+            if (imageSrc.includes('pas_photo')) {
+                modalTitle.textContent = 'Pas Foto';
+            } else if (imageSrc.includes('ktp')) {
+                modalTitle.textContent = 'KTP';
+            } else {
+                modalTitle.textContent = 'Preview Gambar';
+            }
+        });
+    });
+</script>
+{% endblock %}

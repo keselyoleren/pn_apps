@@ -1,4 +1,5 @@
 from django.db import models
+from config.choice import Status, Tingkat
 from config.models import BaseModel
 from PIL import Image
 from io import BytesIO
@@ -67,4 +68,31 @@ class Members(BaseModel):
                     super().save(*args, **kwargs)  
         except Exception as e:
             print(f"Error processing image: {e}")
-    
+
+class Sertifikat(BaseModel):
+    user = models.ForeignKey(AccountUser, on_delete=models.CASCADE, related_name="sertificate", blank=True, null=True)
+    nomor_sertifikat = models.CharField(max_length=100, unique=True)
+    diterbitkan_oleh = models.CharField(max_length=255)
+    tanggal_terbit = models.DateField()
+    tingkat = models.CharField(max_length=10,choices=Tingkat.choices)
+    file_sertifikat = models.FileField(upload_to="sertifikat/",blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.nomor_sertifikat} - {self.tingkat}"
+
+
+class IKT(BaseModel):
+    user = models.ForeignKey(AccountUser, on_delete=models.CASCADE, related_name="ikt", blank=True, null=True)
+    nomor_sertifikat = models.CharField(max_length=100, unique=True)
+    naik_ke_tingkat = models.CharField(max_length=50, choices=Tingkat.choices, blank=True, null=True)
+    status = models.CharField(max_length=50, choices=Status.choices, default=Status.MENUNGGU, blank=True, null=True)
+    file = models.ImageField("File sertifikat sebelumnya",upload_to="sertifikat/", blank=True, null=True)
+    alasan_penolakan = models.TextField(blank=True, null=True)
+
+    @property
+    def get_name(self):
+        member = Members.objects.filter(user=self.user)
+        if not member:
+            return ""
+        return member.first().nama
+        

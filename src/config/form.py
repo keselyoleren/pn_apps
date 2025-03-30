@@ -11,7 +11,7 @@ class AbstractForm(forms.ModelForm):
             if field == 'created_by' and not get_user().is_superuser:
                 self.fields['created_by'].widget = forms.HiddenInput()
             
-            if field in ['tgl_lahir', 'thn_gabung']:
+            if field in ['tgl_lahir', 'thn_gabung', 'tanggal_terbit']:
                 # Get the current value
                 current_value = self.initial.get(field, None)
                 
@@ -33,7 +33,7 @@ class AbstractForm(forms.ModelForm):
                     'type': 'date',
                     'class': 'form-control',
                     'value': formatted_value
-                })
+                }, format='%Y-%m-%d')
 
             if field in ['user']:
                 self.fields['user'].widget = forms.HiddenInput()

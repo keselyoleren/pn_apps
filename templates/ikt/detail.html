@@ -1,0 +1,151 @@
+{% extends 'layouts/main.html' %}
+{% load static %}
+{% block css %}
+<style>
+    .img-popup {
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .img-popup:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        opacity: 0.9;
+    }
+    .img-thumbnail {
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+        padding: 0.25rem;
+        background-color: #f8f9fa;
+    }
+    #modalImage {
+        max-height: 80vh;
+        width: auto;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+    <!-- Page Heading -->
+    {% include 'component/content_header.html' %}
+    
+    <div class="row">
+        <div class="col">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{{ header_title }}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tr>
+                                <th width="20%">No Sertifikat</th>
+                                <td>{{ ikt.nomor_sertifikat }}</td>
+                            </tr>
+                            <tr>
+                                <th width="20%">Kenaikan Tingkat</th>
+                                <td>
+                                    {% with tingkat=ikt.naik_ke_tingkat|lower %}
+                                        {% if tingkat == "putih" %}
+                                            <span class="badge bg-light text-dark">{{ tingkat|title }}</span>
+                                        {% elif tingkat == "kuning" %}
+                                            <span class="badge bg-warning text-dark">{{ tingkat|title }}</span>
+                                        {% elif tingkat == "merah" %}
+                                            <span class="badge bg-danger text-white">{{ tingkat|title }}</span>
+                                        {% elif tingkat == "biru" %}
+                                            <span class="badge bg-primary text-white">{{ tingkat|title }}</span>
+                                        {% elif tingkat == "coklat" %}
+                                            <span class="badge bg-brown text-white">{{ tingkat|title }}</span>
+                                        {% elif tingkat == "hitam" %}
+                                            <span class="badge bg-dark text-white">{{ tingkat|title }}</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary text-white">{{ tingkat|title }}</span>
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="20%">Status</th>
+                                <td>
+                                    {% if ikt.status == "menunggu" %}
+                                        <span class="badge badge-warning text-dark">{{ ikt.status|title }}</span>
+                                    {% elif ikt.status == "disetujui admin wilayah" %}
+                                        <span class="badge badge-success">{{ ikt.status|title }}</span>
+                                    {% elif ikt.status == "disetujui admin pac" %}
+                                        <span class="badge badge-info">{{ ikt.status|title }}</span>
+                                    {% elif ikt.status == "ditolak" %}
+                                        <span class="badge badge-danger">{{ ikt.status|title }}</span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">{{ ikt.status|title }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="20%">Alasan Penolakan</th>
+                                <td>{{ ikt.alasan_penolakan }}</td>
+                            </tr>
+                            <tr>
+                                <th width="20%">Sertifikat Sebelumnya</th>
+                                <td>
+                                    {% if ikt.file %}
+                                        <img src="{{ ikt.file.url }}" 
+                                            class="img-thumbnail img-popup" 
+                                            style="max-width: 200px; cursor: pointer;" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#imageModal"
+                                            data-image-src="{{ ikt.file.url }}">
+                                    {% else %}
+                                        <div class="img-thumbnail" style="width: 200px; height: 150px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                                            <span class="text-muted">No image</span>
+                                        </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                        <a href="{% url 'ikt-list' %}" class="btn btn-primary">Kembali</a>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal untuk menampilkan gambar -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Detail Sertifikat</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="" id="modalImage" class="img-fluid">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js %}
+<!-- Load Bootstrap JS dari CDN -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Menggunakan event listener untuk modal show event
+    document.addEventListener('DOMContentLoaded', function() {
+        var imageModal = document.getElementById('imageModal');
+        
+        imageModal.addEventListener('show.bs.modal', function (event) {
+            // Button that triggered the modal
+            var button = event.relatedTarget;
+            // Extract info from data-image-src attribute
+            var imageSrc = button.getAttribute('data-image-src');
+            // Update the modal's content
+            var modalImage = document.getElementById('modalImage');
+            modalImage.src = imageSrc;
+        });
+    });
+</script>
+
+{% endblock %}

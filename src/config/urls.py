@@ -19,7 +19,7 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from members.views import IndexPage, MembersCreateView, anggota_stats
+from members.views.views import IndexPage, MembersCreateView, anggota_stats
 from users.views.login_views import ChangePasswordAdminView, CustomPasswordChangeView, LogoutView, ProfileUserApiView, UserLoginView
 
 urlpatterns = [

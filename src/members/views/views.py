@@ -5,13 +5,13 @@ from django.contrib import messages
 from django.views.generic import TemplateView
 from config.choice import RoleUser
 from config.permis import IsPublicAuth, IsLoginAuthenticated, LoginRequiredMixin
-from members.forms import MembersForm
+from members.forms import MembersForm, SuperUserMembersForm
 from members.models import Members
 from users.models import AccountUser
-from django.views.generic import CreateView, ListView, UpdateView, DeleteView
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import JsonResponse
 
 def anggota_stats(request):
@@ -70,14 +70,21 @@ class MembersCreateView(CreateView):
     def form_valid(self, form):
         response =  super().form_valid(form)
         email = form.cleaned_data.get('email')
-        member, created = AccountUser.objects.get_or_create(
-            username=email, 
+        nik = form.cleaned_data.get('nik')
+        user, created = AccountUser.objects.get_or_create(
+            username=nik, 
+            email=email,
             role=RoleUser.MEMBER,
+            kabupaten=form.cleaned_data.get('kabupaten'),
+            wilayah=form.cleaned_data.get('kecamatan'),
             defaults={'email': email}
         )
-        self.object.member = member
+        # set password
+        user.set_password("default")
+        user.save()
+        self.object.user = user
         self.object.save()
-        messages.success(self.request, "Anggota berhasil didaftarkan hubungi admin wilayah untuk pengecekan dan setting password!")
+        messages.success(self.request, "Registrasi berhasil, silahkan login dengan username dengan 'NIK' anda dan password 'default'")
         return response
 
 class MemebersAdminCreateView(IsPublicAuth, CreateView):
@@ -100,15 +107,48 @@ class MembersListView(IsPublicAuth, ListView):
     model = Members
     template_name = 'members/list.html'
     context_object_name = 'list_members'
+    paginate_by = 10  # Number of items per page
     
     def get_queryset(self):
         user_wilayah = self.request.user.wilayah
+        queryset = super().get_queryset()
+        
+        # Apply role-based filtering
         if self.request.user.is_superuser:
-            return Members.objects.all()
-        if self.request.user.role == RoleUser.MEMBER:
-            return Members.objects.filter(user=self.request.user)
-        return Members.objects.filter(kecamatan=user_wilayah)
-
+            queryset = Members.objects.all()
+        elif self.request.user.role == RoleUser.MEMBER:
+            queryset = Members.objects.filter(user=self.request.user)
+        elif self.request.user.role == RoleUser.PAC:
+            queryset = Members.objects.filter(kabupaten=self.request.user.kabupaten)
+        else:
+            queryset = Members.objects.filter(kecamatan=user_wilayah)
+        
+        # Search functionality
+        search_query = self.request.GET.get('search', '')
+        if search_query:
+            queryset = queryset.filter(
+                Q(nik__icontains=search_query) |
+                Q(email__icontains=search_query) |
+                Q(nama__icontains=search_query) |
+                Q(kecamatan__icontains=search_query) |
+                Q(kabupaten__icontains=search_query) |
+                Q(provinsi__icontains=search_query) |
+                Q(no_hp__icontains=search_query) |
+                Q(unit_latihan__icontains=search_query) |
+                Q(jenis_kelamin__icontains=search_query) |
+                Q(tempat_lahir__icontains=search_query) |
+                Q(tgl_lahir__icontains=search_query) |
+                Q(kelurahan__icontains=search_query)
+            )
+        
+        # Sorting
+        sort_field = self.request.GET.get('sort', 'nama')  # Default sort by name
+        sort_direction = self.request.GET.get('direction', 'asc')
+        
+        if sort_direction == 'desc':
+            sort_field = f'-{sort_field}'
+        
+        return queryset.order_by(sort_field)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -129,7 +169,10 @@ class MembersListView(IsPublicAuth, ListView):
                 'header': 'Anggota',
                 'header_title': header_title,
                 'btn_add': True,
-                'create_url': reverse_lazy('member-create')
+                'create_url': reverse_lazy('member-create'),
+                'search_query': self.request.GET.get('search', ''),
+                'current_sort': self.request.GET.get('sort', 'nama'),
+                'current_direction': self.request.GET.get('direction', 'asc'),
             })
         
         return context
@@ -138,9 +181,15 @@ class MembersListView(IsPublicAuth, ListView):
 class MembersUpdateView(IsPublicAuth, UpdateView):
     model = Members
     template_name = 'component/form.html'
-    form_class = MembersForm
     success_url = reverse_lazy('member-list')
 
+    def get_form_class(self):
+        user = self.request.user        
+        if user.role == RoleUser.MEMBER:
+            return MembersForm
+        else: 
+            return SuperUserMembersForm
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.user.role == RoleUser.MEMBER:
@@ -150,6 +199,11 @@ class MembersUpdateView(IsPublicAuth, UpdateView):
             context['header'] = 'Anggota'
             context['header_title'] = 'Edit Anggota'
         return context
+    
+    def form_valid(self, form):
+        if self.request.user.role == RoleUser.MEMBER:
+            form.instance.user = self.request.user
+        return super().form_valid(form)
 
 class MembersDeleteView(IsPublicAuth, DeleteView):
     model = Members
@@ -166,3 +220,14 @@ def get_wilayah(request):
     kecamatan = request.GET.get('kecamatan')
     wilayah = Members.objects.filter(kecamatan=kecamatan).order_by('kelurahan').values('kelurahan').distinct()
     return render(request, 'component/wilayah.html', {'wilayah': wilayah})
+
+class MemberDetailView(IsPublicAuth, DetailView):
+    model = Members
+    template_name = 'members/detail.html'
+    context_object_name = 'member'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['header'] = 'Anggota'
+        context['header_title'] = 'Detail Anggota'
+        return context

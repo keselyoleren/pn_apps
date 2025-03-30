@@ -1,8 +1,31 @@
 {% load static %}
+<style>
+    .sidebar {
+        height: 100vh; /* Full viewport height */
+        overflow-y: auto; /* Enable vertical scrolling */
+        position: sticky;
+        top: 0;
+    }
+    
+    /* Optional: Style the scrollbar */
+    .sidebar::-webkit-scrollbar {
+        width: 5px;
+    }
+    
+    
+    .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 5px;
+    }
+</style>
+
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-        <div class="sidebar-brand-text">Data Anggota Pagarnusa</div>
+        <div class="sidebar-brand-icon">
+            <img src="https://salam.pagarnusa.or.id/assets/images/logo/logo.svg" width="50" alt="">
+        </div>
+        <div class="sidebar-brand-text mx-3">Pagarnusa </div>
     </a>
     
     <!-- Divider -->
@@ -32,13 +55,20 @@
             {% else %}
                 <span>Anngota</span></a>
             {% endif %}
+        <a class="nav-link" href="{% url 'certificate-list' %}">
+            <i class="fas fa-fw fa-certificate"></i>
+            <span>Sertifikat</span>
+        </a>
+
+        <a class="nav-link" href="{% url 'ikt-list' %}">
+            <i class="fas fa-fw fa-user-plus"></i>
+            <span>IKT </span>
+        </a>
     </li>
     
-    
-    <!-- Heading -->
+    <!-- Divider -->
     <hr class="sidebar-divider">
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
     </div>
-
 </ul>
