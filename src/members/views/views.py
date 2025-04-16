@@ -82,7 +82,6 @@ class MembersCreateView(CreateView):
         )
         # set password
         user.set_password("default")
-        user.is_active = False
         user.save()
         self.object.user = user
         self.object.save()
