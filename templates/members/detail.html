@@ -107,7 +107,7 @@
                                             {% if member.kelurahan or member.kecamatan or member.kabupaten or member.provinsi %}
                                                 {{ member.kelurahan|default:"" }}, {{ member.kecamatan|default:"" }}, 
                                                 {{ member.kabupaten|default:"" }}, {{ member.provinsi|default:"" }}
-                                                {{ member.alamat }}
+                                                {{ member.alamat|default:"" }}
                                             {% else %}
                                                 -
                                             {% endif %}
