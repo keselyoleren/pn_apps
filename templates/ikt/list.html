@@ -139,9 +139,28 @@
                                     </td>
                                     <td>{{ item.created_at }}</td>
                                     <td>
-                                        <a class="btn btn-outline-info" href="{% url 'ikt-update' item.id  %}"><i class="fa fa-edit"></i></a>
-                                        <a class="btn btn-outline-primary" href="{% url 'ikt-detail' item.id  %}"><i class="fa fa-eye"></i></a>
-                                        <a class="btn btn-outline-danger" href="{% url 'ikt-delete' item.id  %}"><i class="fa fa-trash"></i></a>
+                                        {% if user.role == "pc" %}
+                                            {% if item.status == "disetujui admin pac" or item.status == "disetujui admin wilayah" %}
+                                                <a class="btn btn-outline-info" href="{% url 'ikt-update' item.id  %}"><i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-outline-primary" href="{% url 'ikt-detail' item.id  %}"><i class="fa fa-eye"></i></a>
+                                                <a class="btn btn-outline-danger" href="{% url 'ikt-delete' item.id  %}"><i class="fa fa-trash"></i></a>
+                                            {% else %}
+                                                <a class="btn btn-outline-primary" href="{% url 'ikt-detail' item.id  %}"><i class="fa fa-eye"></i></a>
+                                                <a class="btn btn-outline-danger" href="{% url 'ikt-delete' item.id  %}"><i class="fa fa-trash"></i></a>
+                                            {% endif %}
+                                        {% elif user.role == 'pac' %}
+                                            {% if item.status == "disetujui admin wilayah" %}   
+                                                <a class="btn btn-outline-primary" href="{% url 'ikt-detail' item.id  %}"><i class="fa fa-eye"></i></a>
+                                                <a class="btn btn-outline-danger" href="{% url 'ikt-delete' item.id  %}"><i class="fa fa-trash"></i></a>
+                                            {% else %}
+                                                <a class="btn btn-outline-info" href="{% url 'ikt-update' item.id  %}"><i class="fa fa-edit"></i></a>
+                                                <a class="btn btn-outline-primary" href="{% url 'ikt-detail' item.id  %}"><i class="fa fa-eye"></i></a>
+                                                <a class="btn btn-outline-danger" href="{% url 'ikt-delete' item.id  %}"><i class="fa fa-trash"></i></a>
+                                            {% endif %}
+                                        {% else %}
+                                            <a class="btn btn-outline-primary" href="{% url 'ikt-detail' item.id  %}"><i class="fa fa-eye"></i></a>
+                                            <a class="btn btn-outline-danger" href="{% url 'ikt-delete' item.id  %}"><i class="fa fa-trash"></i></a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% empty %}

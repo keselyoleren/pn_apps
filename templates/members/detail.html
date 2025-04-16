@@ -94,12 +94,12 @@
                                         <td>{{ member.thn_gabung|date:"d F Y"|default:"-" }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Lokasi Latihan</th>
-                                        <td>{{ member.lokasi|default:"-" }}</td>
-                                    </tr>
-                                    <tr>
                                         <th>Unit Latihan</th>
                                         <td>{{ member.unit_latihan|default:"-" }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Nama Pelatih</th>
+                                        <td>{{ member.nama_pelatih|default:"-" }}</td>
                                     </tr>
                                     <tr>
                                         <th>Alamat</th>
@@ -107,6 +107,7 @@
                                             {% if member.kelurahan or member.kecamatan or member.kabupaten or member.provinsi %}
                                                 {{ member.kelurahan|default:"" }}, {{ member.kecamatan|default:"" }}, 
                                                 {{ member.kabupaten|default:"" }}, {{ member.provinsi|default:"" }}
+                                                {{ member.alamat }}
                                             {% else %}
                                                 -
                                             {% endif %}

@@ -20,12 +20,13 @@ class Members(BaseModel):
     no_hp = models.CharField("No. HP", max_length=20, blank=True, null=True)
 
     thn_gabung = models.DateField("Tahun bergabung", blank=True, null=True)
-    lokasi = models.CharField("Lokasi Latihan", max_length=200, blank=True, null=True)
+    unit_latihan = models.CharField("Unit Latihan", max_length=100, blank=True, null=True)
+    nama_pelatih = models.CharField("Nama Pelatih", max_length=100, blank=True, null=True)
     provinsi = models.CharField("Provinsi", max_length=100, blank=True, null=True)
     kabupaten = models.CharField("Kabupaten", max_length=100, blank=True, null=True)
     kecamatan = models.CharField("Kecamatan", max_length=100, blank=True, null=True)
     kelurahan = models.CharField("Kelurahan", max_length=100, blank=True, null=True)
-    unit_latihan = models.CharField("Unit Latihan", max_length=100, blank=True, null=True)
+    alamat = models.CharField("Alamat Rumah", max_length=200, blank=True, null=True)
 
     pas_photo = models.ImageField("Pas Photo", upload_to="members/pas_photo", blank=True, null=True)
     ktp = models.ImageField("KTP", upload_to="members/ktp", blank=True, null=True)

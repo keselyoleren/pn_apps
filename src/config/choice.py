@@ -4,6 +4,7 @@ class RoleUser(TextChoices):
     ADMIN = 'admin'
     MEMBER = 'member'
     PAC = 'pac'
+    PC = 'pc'
     
 class Tingkat(TextChoices):
     PUTIH  = 'putih'

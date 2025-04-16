@@ -26,6 +26,9 @@ class IKTListView(IsPublicAuth, ListView):
         if user.role == RoleUser.MEMBER:
             queryset = queryset.filter(user=user)
         elif user.role == RoleUser.PAC:
+            member = Members.objects.filter(kecamatan=user.wilayah).values_list('user', flat=True)
+            queryset = queryset.filter(user__in=member)
+        elif user.role == RoleUser.PC:
             member = Members.objects.filter(kabupaten=user.kabupaten).values_list('user', flat=True)
             queryset = queryset.filter(user__in=member)
         
@@ -53,8 +56,8 @@ class IKTListView(IsPublicAuth, ListView):
         
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['header'] = 'IKT (Imtihan Kenaikan Tinggkat)'
-        context['header_title'] = 'List IKT (Imtihan Kenaikan Tinggkat)'
+        context['header'] = 'IKT (Imtihan Kenaikan Tingkat)'
+        context['header_title'] = 'List IKT (Imtihan Kenaikan Tingkat)'
         if self.request.user.role == RoleUser.PAC:
             context['btn_add'] = False
         else:
@@ -85,8 +88,8 @@ class IKTCreateView(IsPublicAuth, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['header'] = 'IKT (Imtihan Kenaikan Tinggkat)'
-        context['header_title'] = 'Ajukan IKT (Imtihan Kenaikan Tinggkat)'
+        context['header'] = 'IKT (Imtihan Kenaikan Tingkat)'
+        context['header_title'] = 'Ajukan IKT (Imtihan Kenaikan Tingkat)'
         return context
 
     def form_valid(self, form):
@@ -109,8 +112,8 @@ class IKTUpdateView(IsPublicAuth, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['header'] = 'IKT (Imtihan Kenaikan Tinggkat)'
-        context['header_title'] = 'Edit IKT (Imtihan Kenaikan Tinggkat)'
+        context['header'] = 'IKT (Imtihan Kenaikan Tingkat)'
+        context['header_title'] = 'Edit IKT (Imtihan Kenaikan Tingkat)'
         return context
     
     def form_valid(self, form):
@@ -138,6 +141,6 @@ class IKTDeleteView(IsPublicAuth, DeleteView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['header'] = 'IKT (Imtihan Kenaikan Tinggkat)'
-        context['header_title'] = 'Delete IKT (Imtihan Kenaikan Tinggkat)'
+        context['header'] = 'IKT (Imtihan Kenaikan Tingkat)'
+        context['header_title'] = 'Delete IKT (Imtihan Kenaikan Tingkat)'
         return context

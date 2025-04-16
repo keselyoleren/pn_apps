@@ -82,6 +82,7 @@ class MembersCreateView(CreateView):
         )
         # set password
         user.set_password("default")
+        user.is_active = False
         user.save()
         self.object.user = user
         self.object.save()
@@ -119,9 +120,9 @@ class MembersListView(IsPublicAuth, ListView):
             queryset = Members.objects.all()
         elif self.request.user.role == RoleUser.MEMBER:
             queryset = Members.objects.filter(user=self.request.user)
-        elif self.request.user.role == RoleUser.PAC:
+        elif self.request.user.role == RoleUser.PC:
             queryset = Members.objects.filter(kabupaten=self.request.user.kabupaten)
-        else:
+        elif self.request.user.role == RoleUser.PAC:
             queryset = Members.objects.filter(kecamatan=user_wilayah)
         
         # Search functionality
