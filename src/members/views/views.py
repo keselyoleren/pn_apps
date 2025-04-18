@@ -90,7 +90,7 @@ class MembersCreateView(CreateView):
 
 class MemebersAdminCreateView(IsPublicAuth, CreateView):
     model = Members
-    template_name = 'component/form.html'
+    template_name = 'members/form.html'
     form_class = MembersForm
     success_url = reverse_lazy('member-list')
 
@@ -181,7 +181,7 @@ class MembersListView(IsPublicAuth, ListView):
 
 class MembersUpdateView(IsPublicAuth, UpdateView):
     model = Members
-    template_name = 'component/form.html'
+    template_name = 'members/form.html'
     success_url = reverse_lazy('member-list')
 
     def get_form_class(self):

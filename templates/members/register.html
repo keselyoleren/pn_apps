@@ -21,69 +21,209 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.10/select2-bootstrap.min.css" rel="stylesheet" />
 
+    <style>
+        .step {
+            display: none;
+        }
+        .step.active {
+            display: block;
+        }
+        .step-indicators {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .step-indicator {
+            width: 100px;
+            text-align: center;
+            position: relative;
+        }
+        .step-indicator:not(:last-child):after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: -50%;
+            width: 100%;
+            height: 2px;
+            background-color: #e2e8f0;
+            z-index: 1;
+        }
+        .step-indicator.completed:not(:last-child):after {
+            background-color: #4e73df;
+        }
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background-color: #e2e8f0;
+            color: #5a5c69;
+            border-radius: 50%;
+            margin: 0 auto 5px;
+            position: relative;
+            z-index: 2;
+        }
+        .step-indicator.active .step-number {
+            background-color: #4e73df;
+            color: white;
+        }
+        .step-indicator.completed .step-number {
+            background-color: #1cc88a;
+            color: white;
+        }
+        .step-label {
+            font-size: 12px;
+            color: #5a5c69;
+        }
+        .step-indicator.active .step-label {
+            color: #4e73df;
+            font-weight: bold;
+        }
+        .step-indicator.completed .step-label {
+            color: #1cc88a;
+        }
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
 <body class="">
-
     <div class="container">
         <!-- Outer Row -->
         <div class="row justify-content-center">
-            <div class="col-xl-10 col-lg-12 col-md-9">
+            <div class="col-lg-10 col-lg-12 col-lg-9">
                 <div class="card o-hidden border-0 shadow-lg my-5">
                     <div class="card-body">
                         <h3 class="card-title">
                             Pendaftaran Anggota
                         </h3>
+                        
+                        <!-- Step Indicators -->
+                        <div class="step-indicators">
+                            <div class="step-indicator active" data-step="1">
+                                <div class="step-number">1</div>
+                                <div class="step-label">Data Diri & Alamat</div>
+                            </div>
+                            <div class="step-indicator" data-step="2">
+                                <div class="step-number">2</div>
+                                <div class="step-label">Unit Latihan</div>
+                            </div>
+                        </div>
+
                         <div class="container">
-                            <form action="." method="POST" id="myForm" enctype="multipart/form-data">
+                            <form action="." method="POST" id="registrationForm" enctype="multipart/form-data">
                                 {% csrf_token %}
-                                <div class="">
+                                
+                                <!-- Step 1: Personal Data and Address -->
+                                <div class="step active" id="step1">
+                                    <h5 class="mb-4">Data Diri & Alamat</h5>
+                                    
                                     {% for fields in form.visible_fields %}
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <label class="col-sm-2 text-left text-gray-800" for="{{ fields.label_tag.id }}">
-                                                <h6>
-                                                    {{ fields.label_tag }}
-                                                    {% if fields.field.required %}
-                                                        <span class="text-red">*</span>
-                                                    {% endif %}
-                                                </h6>
-                                            </label>
-        
-                                            <div class="col-sm-10">
-                                                {% if fields.help_text %}
-                                                    <small class="form-text text-muted mb-1">
-                                                        {{ fields.help_text }}
-                                                    </small>
-                                                {% endif %}
-                                                
-                                                {% if fields.errors %}
-                                                    <span class="text-red">
-                                                        {{ fields.errors }}
-                                                    </span>
-                                                {% endif %}
-                                                {% if fields.name == 'provinsi' or fields.name == 'kabupaten' or fields.name == 'kecamatan' or fields.name == 'kelurahan' %}
-                                                <!-- Special handling for kecamatan field -->
-                                                    <select name="{{ fields.name }}" id="id_{{ fields.name }}" class="form-control select2-kecamatan" style="width: 100%;">
-                                                        {% if fields.value %}
-                                                            <option value="{{ fields.value }}" selected>{{ fields.value }}</option>
+                                        {% if fields.name != 'nama_pelatih' and fields.name != 'unit_latihan' and fields.name != 'provinsi_latihan' and fields.name != 'kabupaten_latihan' and fields.name != 'kecamatan_latihan' and fields.name != 'kelurahan_latihan' and fields.name != 'is_pelatih' %}
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <label class="col-sm-2 text-left text-gray-800" for="{{ fields.label_tag.id }}">
+                                                    <h6>
+                                                        {{ fields.label_tag }}
+                                                        {% if fields.field.required %}
+                                                            <span class="text-red">*</span>
                                                         {% endif %}
-                                                    </select>
-                                                {% else %}
-                                                    {{ fields }}
-                                                {% endif %}
+                                                    </h6>
+                                                </label>
+                
+                                                <div class="col-sm-10">
+                                                    {% if fields.help_text %}
+                                                        <small class="form-text text-muted mb-1">
+                                                            {{ fields.help_text }}
+                                                        </small>
+                                                    {% endif %}
+                                                    
+                                                    {% if fields.errors %}
+                                                        <span class="text-red">
+                                                            {{ fields.errors }}
+                                                        </span>
+                                                    {% endif %}
+                                                    {% if fields.name == 'provinsi' or fields.name == 'kabupaten' or fields.name == 'kecamatan' or fields.name == 'kelurahan' %}
+                                                    <!-- Special handling for location fields -->
+                                                        <select name="{{ fields.name }}" id="id_{{ fields.name }}" class="form-control select2-location" style="width: 100%;">
+                                                            {% if fields.value %}
+                                                                <option value="{{ fields.value }}" selected>{{ fields.value }}</option>
+                                                            {% endif %}
+                                                        </select>
+                                                    {% else %}
+                                                        {{ fields }}
+                                                    {% endif %}
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                        {% endif %}
                                     {% endfor %}
+                                    
+                                    <div class="navigation-buttons">
+                                        <div></div> <!-- Empty div for spacing -->
+                                        <button type="button" class="btn btn-primary next-step">Lanjut ke Unit Latihan</button>
+                                    </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="form-group"> 
-                                        <input type="submit" value="Register" class="btn btn-success form-control">
+                                
+                                <!-- Step 2: Unit Latihan -->
+                                <div class="step" id="step2">
+                                    <h5 class="mb-4">Unit Latihan</h5>
+                                    
+                                    {% for fields in form.visible_fields %}
+                                        {% if fields.name == 'nama_pelatih' or fields.name == 'unit_latihan' or fields.name == 'provinsi_latihan' or fields.name == 'kabupaten_latihan' or fields.name == 'kecamatan_latihan' or fields.name == 'kelurahan_latihan' %}
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <label class="col-sm-2 text-left text-gray-800" for="{{ fields.label_tag.id }}">
+                                                    <h6>
+                                                        {{ fields.label_tag }}
+                                                        {% if fields.field.required %}
+                                                            <span class="text-red">*</span>
+                                                        {% endif %}
+                                                    </h6>
+                                                </label>
+                
+                                                <div class="col-sm-10">
+                                                    {% if fields.help_text %}
+                                                        <small class="form-text text-muted mb-1">
+                                                            {{ fields.help_text }}
+                                                        </small>
+                                                    {% endif %}
+                                                    
+                                                    {% if fields.errors %}
+                                                        <span class="text-red">
+                                                            {{ fields.errors }}
+                                                        </span>
+                                                    {% endif %}
+                                                    
+                                                    {% if fields.name == 'provinsi_latihan' or fields.name == 'kabupaten_latihan' or fields.name == 'kecamatan_latihan' or fields.name == 'kelurahan_latihan' %}
+                                                    <!-- Special handling for location fields -->
+                                                        <select name="{{ fields.name }}" id="id_{{ fields.name }}" class="form-control select2-location" style="width: 100%;">
+                                                            {% if fields.value %}
+                                                                <option value="{{ fields.value }}" selected>{{ fields.value }}</option>
+                                                            {% endif %}
+                                                        </select>
+                                                    {% else %}
+                                                        {{ fields }}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                    
+                                    <div class="navigation-buttons">
+                                        <button type="button" class="btn btn-secondary prev-step">Kembali</button>
+                                        <button type="submit" class="btn btn-success">Register</button>
                                     </div>
                                 </div>
                             </form>
-                            <div class="d-flex justify-content-center">
+                            
+                            <div class="d-flex justify-content-center mt-3">
                                 <a href="{% url 'login' %}" class="">Kembali ke halaman login</a>
                             </div>
                         </div>
@@ -102,171 +242,295 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
+    <!-- Script untuk multi-step form -->
+    <script>
+        $(document).ready(function() {
+            // Multi-step form navigation
+            $('.next-step').click(function() {
+                // Basic validation for step 1
+                let isValid = true;
+                $('#step1').find('select[required], input[required], textarea[required]').each(function() {
+                    if($(this).val() === '') {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+                
+                if(!isValid) {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Harap lengkapi semua field yang wajib diisi',
+                        icon: 'error'
+                    });
+                    return;
+                }
+                
+                $('#step1').removeClass('active');
+                $('#step2').addClass('active');
+                $('.step-indicator[data-step="1"]').removeClass('active').addClass('completed');
+                $('.step-indicator[data-step="2"]').addClass('active');
+            });
+
+            $('.prev-step').click(function() {
+                $('#step2').removeClass('active');
+                $('#step1').addClass('active');
+                $('.step-indicator[data-step="2"]').removeClass('active');
+                $('.step-indicator[data-step="1"]').removeClass('completed').addClass('active');
+            });
+            
+            // Form submission validation
+            $('#registrationForm').submit(function(e) {
+                let isValid = true;
+                $('#step2').find('select[required], input[required], textarea[required]').each(function() {
+                    if($(this).val() === '') {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                });
+                
+                if(!isValid) {
+                    e.preventDefault();
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Harap lengkapi semua field yang wajib diisi pada Unit Latihan',
+                        icon: 'error'
+                    });
+                }
+            });
+        });
+    </script>
+
     <!-- Script untuk form wilayah bertingkat -->
     <script>
         $(document).ready(function() {
-        // Initialize Select2 with proper configuration
-        function initializeSelect2() {
-            $('#id_provinsi, #id_kabupaten, #id_kecamatan, #id_kelurahan').select2({
-                theme: 'bootstrap', // Optional: matches Bootstrap theme
-                width: '100%',     // Make it full width
-                placeholder: function() {
-                    return $(this).data('placeholder') || '-- Pilih --';
-                },
-                allowClear: true
-            });
-        }
-
-        // API endpoint
-        const API_URL = 'https://www.emsifa.com/api-wilayah-indonesia/api/';
-        
-        // Object to store current IDs for API calls
-        const currentIds = {
-            province: null,
-            regency: null,
-            district: null
-        };
-
-        // First initialize Select2
-        initializeSelect2();
-
-        // Then load provinces
-        $.get(API_URL + 'provinces.json', function(data) {
-            $('#id_provinsi').empty().append('<option value="">-- Pilih Provinsi --</option>');
-            $.each(data, function(index, province) {
-                $('#id_provinsi').append(`<option data-id="${province.id}" value="${province.name}">${province.name}</option>`);
-            });
-            
-            // Reinitialize Select2 after loading options
-            $('#id_provinsi').select2('destroy').select2({
+            $('#id_nama_pelatih').select2({
                 theme: 'bootstrap',
                 width: '100%',
-                placeholder: '-- Pilih Provinsi --',
+                placeholder: 'Pilih Pelatih',
                 allowClear: true
             });
-            
-            // Set initial value if exists
-            const initialProvince = "{{ form.provinsi.value }}";
-            if (initialProvince) {
-                $('#id_provinsi').val(initialProvince).trigger('change');
+            // Initialize Select2 with proper configuration
+            function initializeSelect2(selector) {
+                $(selector).select2({
+                    theme: 'bootstrap',
+                    width: '100%',
+                    placeholder: function() {
+                        return $(this).data('placeholder') || '-- Pilih --';
+                    },
+                    allowClear: true
+                });
             }
-        });
 
-        // ... [rest of your existing code] ...
-        
-        // Reinitialize Select2 whenever new options are loaded
-        function loadRegencies(provinceId) {
-            $('#id_kabupaten').empty().append('<option value="">-- Pilih Kabupaten/Kota --</option>').prop('disabled', false);
-            $.get(API_URL + `regencies/${provinceId}.json`, function(data) {
-                $.each(data, function(index, regency) {
-                    $('#id_kabupaten').append(`<option data-id="${regency.id}" value="${regency.name}">${regency.name}</option>`);
+            // API endpoint
+            const API_URL = 'https://www.emsifa.com/api-wilayah-indonesia/api/';
+            
+            // Objects to store current IDs for API calls - separate for personal and unit latihan
+            const personalLocationIds = {
+                province: null,
+                regency: null,
+                district: null
+            };
+            
+            const unitLocationIds = {
+                province: null,
+                regency: null,
+                district: null
+            };
+
+            // Initialize all Select2 dropdowns
+            initializeSelect2('#id_provinsi, #id_kabupaten, #id_kecamatan, #id_kelurahan, #id_provinsi_latihan, #id_kabupaten_latihan, #id_kecamatan_latihan');
+
+            // Load provinces for both personal and unit latihan
+            function loadProvinces(selector, initialValue) {
+                $.get(API_URL + 'provinces.json', function(data) {
+                    $(selector).empty().append('<option value="">-- Pilih Provinsi --</option>');
+                    $.each(data, function(index, province) {
+                        $(selector).append(`<option data-id="${province.id}" value="${province.name}">${province.name}</option>`);
+                    });
+                    
+                    // Reinitialize Select2 after loading options
+                    $(selector).select2('destroy').select2({
+                        theme: 'bootstrap',
+                        width: '100%',
+                        placeholder: '-- Pilih Provinsi --',
+                        allowClear: true
+                    });
+                    
+                    // Set initial value if exists
+                    if (initialValue) {
+                        $(selector).val(initialValue).trigger('change');
+                    }
                 });
-                
-                // Reinitialize Select2 after loading options
-                $('#id_kabupaten').select2('destroy').select2({
-                    theme: 'bootstrap',
-                    width: '100%',
-                    placeholder: '-- Pilih Kabupaten/Kota --',
-                    allowClear: true
+            }
+            
+            // Load regencies based on selected province
+            function loadRegencies(provinceId, selector, initialValue) {
+                $(selector).empty().append('<option value="">-- Pilih Kabupaten/Kota --</option>').prop('disabled', false);
+                $.get(API_URL + `regencies/${provinceId}.json`, function(data) {
+                    $.each(data, function(index, regency) {
+                        $(selector).append(`<option data-id="${regency.id}" value="${regency.name}">${regency.name}</option>`);
+                    });
+                    
+                    // Reinitialize Select2 after loading options
+                    $(selector).select2('destroy').select2({
+                        theme: 'bootstrap',
+                        width: '100%',
+                        placeholder: '-- Pilih Kabupaten/Kota --',
+                        allowClear: true
+                    });
+                    
+                    // Set initial value if exists
+                    if (initialValue) {
+                        $(selector).val(initialValue).trigger('change');
+                    }
                 });
+            }
+            
+            // Load districts based on selected regency
+            function loadDistricts(regencyId, selector, initialValue) {
+                $(selector).empty().append('<option value="">-- Pilih Kecamatan --</option>').prop('disabled', false);
+                $.get(API_URL + `districts/${regencyId}.json`, function(data) {
+                    $.each(data, function(index, district) {
+                        $(selector).append(`<option data-id="${district.id}" value="${district.name}">${district.name}</option>`);
+                    });
+                    
+                    $(selector).select2('destroy').select2({
+                        theme: 'bootstrap',
+                        width: '100%',
+                        placeholder: '-- Pilih Kecamatan --',
+                        allowClear: true
+                    });
+                    
+                    if (initialValue) {
+                        $(selector).val(initialValue).trigger('change');
+                    }
+                });
+            }
+            
+            // Load villages based on selected district
+            function loadVillages(districtId, selector, initialValue) {
+                $(selector).empty().append('<option value="">-- Pilih Kelurahan/Desa --</option>').prop('disabled', false);
+                $.get(API_URL + `villages/${districtId}.json`, function(data) {
+                    $.each(data, function(index, village) {
+                        $(selector).append(`<option value="${village.name}">${village.name}</option>`);
+                    });
+                    
+                    $(selector).select2('destroy').select2({
+                        theme: 'bootstrap',
+                        width: '100%',
+                        placeholder: '-- Pilih Kelurahan/Desa --',
+                        allowClear: true
+                    });
+                    
+                    if (initialValue) {
+                        $(selector).val(initialValue).trigger('change');
+                    }
+                });
+            }
+            
+            // Personal address location handlers
+            loadProvinces('#id_provinsi', "{{ form.provinsi.value }}");
+            
+            $('#id_provinsi').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                const provinceId = selectedOption.data('id');
+                personalLocationIds.province = provinceId;
                 
-                // Set initial value if exists
-                const initialRegency = "{{ form.kabupaten.value }}";
-                if (initialRegency) {
-                    $('#id_kabupaten').val(initialRegency).trigger('change');
+                if (provinceId) {
+                    loadRegencies(provinceId, '#id_kabupaten', "{{ form.kabupaten.value }}");
+                } else {
+                    $('#id_kabupaten, #id_kecamatan, #id_kelurahan').empty()
+                        .append('<option value="">-- Pilih --</option>')
+                        .prop('disabled', true);
+                    personalLocationIds.regency = null;
+                    personalLocationIds.district = null;
                 }
             });
-        }
-        
-        // Similar reinitialization for districts and villages
-        function loadDistricts(regencyId) {
-            $('#id_kecamatan').empty().append('<option value="">-- Pilih Kecamatan --</option>').prop('disabled', false);
-            $.get(API_URL + `districts/${regencyId}.json`, function(data) {
-                $.each(data, function(index, district) {
-                    $('#id_kecamatan').append(`<option data-id="${district.id}" value="${district.name}">${district.name}</option>`);
-                });
+            
+            $('#id_kabupaten').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                const regencyId = selectedOption.data('id');
+                personalLocationIds.regency = regencyId;
                 
-                $('#id_kecamatan').select2('destroy').select2({
-                    theme: 'bootstrap',
-                    width: '100%',
-                    placeholder: '-- Pilih Kecamatan --',
-                    allowClear: true
-                });
-                
-                const initialDistrict = "{{ form.kecamatan.value }}";
-                if (initialDistrict) {
-                    $('#id_kecamatan').val(initialDistrict).trigger('change');
+                if (regencyId) {
+                    loadDistricts(regencyId, '#id_kecamatan', "{{ form.kecamatan.value }}");
+                } else {
+                    $('#id_kecamatan, #id_kelurahan').empty()
+                        .append('<option value="">-- Pilih --</option>')
+                        .prop('disabled', true);
+                    personalLocationIds.district = null;
                 }
             });
-        }
-        
-        function loadVillages(districtId) {
-            $('#id_kelurahan').empty().append('<option value="">-- Pilih Kelurahan/Desa --</option>').prop('disabled', false);
-            $.get(API_URL + `villages/${districtId}.json`, function(data) {
-                $.each(data, function(index, village) {
-                    $('#id_kelurahan').append(`<option value="${village.name}">${village.name}</option>`);
-                });
+            
+            $('#id_kecamatan').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                const districtId = selectedOption.data('id');
+                personalLocationIds.district = districtId;
                 
-                $('#id_kelurahan').select2('destroy').select2({
-                    theme: 'bootstrap',
-                    width: '100%',
-                    placeholder: '-- Pilih Kelurahan/Desa --',
-                    allowClear: true
-                });
-                
-                const initialVillage = "{{ form.kelurahan.value }}";
-                if (initialVillage) {
-                    $('#id_kelurahan').val(initialVillage).trigger('change');
+                if (districtId) {
+                    loadVillages(districtId, '#id_kelurahan', "{{ form.kelurahan.value }}");
+                } else {
+                    $('#id_kelurahan').empty()
+                        .append('<option value="">-- Pilih --</option>')
+                        .prop('disabled', true);
                 }
             });
-        }
-        
-        // Update your change handlers to use these functions
-        $('#id_provinsi').change(function() {
-            const selectedOption = $(this).find('option:selected');
-            const provinceId = selectedOption.data('id');
-            currentIds.province = provinceId;
             
-            if (provinceId) {
-                loadRegencies(provinceId);
-            } else {
-                $('#id_kabupaten, #id_kecamatan, #id_kelurahan').empty()
-                    .append('<option value="">-- Pilih --</option>')
-                    .prop('disabled', true);
-                currentIds.regency = null;
-                currentIds.district = null;
-            }
-        });
-        
-        $('#id_kabupaten').change(function() {
-            const selectedOption = $(this).find('option:selected');
-            const regencyId = selectedOption.data('id');
-            currentIds.regency = regencyId;
+            // Unit Latihan location handlers - load on step 2 activation
+            $('.next-step').click(function() {
+                // Load provinces for unit latihan when moving to step 2
+                loadProvinces('#id_provinsi_latihan', "{{ form.provinsi_latihan.value }}");
+            });
             
-            if (regencyId) {
-                loadDistricts(regencyId);
-            } else {
-                $('#id_kecamatan, #id_kelurahan').empty()
-                    .append('<option value="">-- Pilih --</option>')
-                    .prop('disabled', true);
-                currentIds.district = null;
-            }
-        });
-        
-        $('#id_kecamatan').change(function() {
-            const selectedOption = $(this).find('option:selected');
-            const districtId = selectedOption.data('id');
-            currentIds.district = districtId;
+            $('#id_provinsi_latihan').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                const provinceId = selectedOption.data('id');
+                unitLocationIds.province = provinceId;
+                
+                if (provinceId) {
+                    loadRegencies(provinceId, '#id_kabupaten_latihan', "{{ form.kabupaten_latihan.value }}");
+                } else {
+                    $('#id_kabupaten_latihan, #id_kecamatan_latihan').empty()
+                        .append('<option value="">-- Pilih --</option>')
+                        .prop('disabled', true);
+                    unitLocationIds.regency = null;
+                    unitLocationIds.district = null;
+                }
+            });
             
-            if (districtId) {
-                loadVillages(districtId);
-            } else {
-                $('#id_kelurahan').empty()
-                    .append('<option value="">-- Pilih --</option>')
-                    .prop('disabled', true);
-            }
+            $('#id_kabupaten_latihan').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                const regencyId = selectedOption.data('id');
+                unitLocationIds.regency = regencyId;
+                
+                if (regencyId) {
+                    loadDistricts(regencyId, '#id_kecamatan_latihan', "{{ form.kecamatan_latihan.value }}");
+                } else {
+                    $('#id_kecamatan_latihan').empty()
+                        .append('<option value="">-- Pilih --</option>')
+                        .prop('disabled', true);
+                    unitLocationIds.district = null;
+                }
+            });
+
+            $('#id_kecamatan_latihan').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                const districtId = selectedOption.data('id');
+                personalLocationIds.district = districtId;
+                
+                if (districtId) {
+                    loadVillages(districtId, '#id_kelurahan_latihan', "{{ form.kelurahan_latihan.value }}");
+                } else {
+                    $('#id_kelurahan_latihan').empty()
+                        .append('<option value="">-- Pilih --</option>')
+                        .prop('disabled', true);
+                }
+            });
         });
-    });
     </script>
 
     {% if messages %}

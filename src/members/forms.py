@@ -7,6 +7,12 @@ from django.utils import timezone
 
 
 class MembersForm(AbstractForm):
+    nama_pelatih = forms.ModelChoiceField(
+        queryset=Members.objects.filter(is_pelatih=True),
+        required=False,
+        label="Nama Pelatih",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     class Meta:
         model = Members
         fields = '__all__'  
