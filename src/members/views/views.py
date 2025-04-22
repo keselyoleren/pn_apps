@@ -75,17 +75,17 @@ class MembersCreateView(CreateView):
             username=nik, 
             email=email,
             first_name=form.cleaned_data.get('nama'),
-            role=RoleUser.MEMBER,
+            role=RoleUser.SANTRI,
             kabupaten=form.cleaned_data.get('kabupaten'),
             wilayah=form.cleaned_data.get('kecamatan'),
             defaults={'email': email}
         )
         # set password
-        user.set_password("default")
+        user.set_password("pagarnusabwi1985.1986")
         user.save()
         self.object.user = user
         self.object.save()
-        messages.success(self.request, "Registrasi berhasil, silahkan login dengan username dengan 'NIK' anda dan password 'default'")
+        messages.success(self.request, "Registrasi berhasil, silahkan login dengan username dengan 'NIK' anda dan password 'pagarnusabwi1985.1986'")
         return response
 
 class MemebersAdminCreateView(IsPublicAuth, CreateView):
@@ -96,7 +96,7 @@ class MemebersAdminCreateView(IsPublicAuth, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['header'] = 'Anngota'
+        context['header'] = 'Anggota'
         context['header_title'] = 'Add Anggota'
         return context
 
@@ -117,7 +117,7 @@ class MembersListView(IsPublicAuth, ListView):
         # Apply role-based filtering
         if self.request.user.is_superuser:
             queryset = Members.objects.all()
-        elif self.request.user.role == RoleUser.MEMBER:
+        elif self.request.user.role == RoleUser.SANTRI:
             queryset = Members.objects.filter(user=self.request.user)
         elif self.request.user.role == RoleUser.PC:
             queryset = Members.objects.filter(kabupaten=self.request.user.kabupaten)
@@ -155,7 +155,7 @@ class MembersListView(IsPublicAuth, ListView):
         context = super().get_context_data(**kwargs)
         user = self.request.user
         
-        if user.role == RoleUser.MEMBER:
+        if user.role == RoleUser.SANTRI:
             context.update({
                 'header': 'Data diri',
                 'header_title': 'Data diri',
@@ -186,14 +186,14 @@ class MembersUpdateView(IsPublicAuth, UpdateView):
 
     def get_form_class(self):
         user = self.request.user        
-        if user.role == RoleUser.MEMBER:
+        if user.role == RoleUser.SANTRI:
             return MembersForm
         else: 
             return SuperUserMembersForm
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if self.request.user.role == RoleUser.MEMBER:
+        if self.request.user.role == RoleUser.SANTRI:
             context['header'] = 'Data diri'
             context['header_title'] = 'Edit data diri'
         else:
@@ -202,7 +202,7 @@ class MembersUpdateView(IsPublicAuth, UpdateView):
         return context
     
     def form_valid(self, form):
-        if self.request.user.role == RoleUser.MEMBER:
+        if self.request.user.role == RoleUser.SANTRI:
             form.instance.user = self.request.user
         return super().form_valid(form)
 

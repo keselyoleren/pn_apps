@@ -23,7 +23,7 @@ class IKTListView(IsPublicAuth, ListView):
         queryset = super().get_queryset()
         
         # Role-based filtering
-        if user.role == RoleUser.MEMBER:
+        if user.role == RoleUser.SANTRI:
             queryset = queryset.filter(user=user)
         elif user.role == RoleUser.PAC:
             member = Members.objects.filter(kecamatan=user.wilayah).values_list('user', flat=True)
@@ -81,7 +81,7 @@ class IKTCreateView(IsPublicAuth, CreateView):
     def get_form_class(self):
         user = self.request.user
         
-        if user.role == RoleUser.MEMBER:
+        if user.role == RoleUser.SANTRI:
             return IKTForm
         else: 
             return SuperUserIKTForm
@@ -93,7 +93,7 @@ class IKTCreateView(IsPublicAuth, CreateView):
         return context
 
     def form_valid(self, form):
-        if self.request.user.role == RoleUser.MEMBER:
+        if self.request.user.role == RoleUser.SANTRI:
             form.instance.user = self.request.user
         return super().form_valid(form)
 
@@ -105,7 +105,7 @@ class IKTUpdateView(IsPublicAuth, UpdateView):
     def get_form_class(self):
         user = self.request.user
         
-        if user.role == RoleUser.MEMBER:
+        if user.role == RoleUser.SANTRI:
             return IKTForm
         else: 
             return SuperUserIKTForm
@@ -117,7 +117,7 @@ class IKTUpdateView(IsPublicAuth, UpdateView):
         return context
     
     def form_valid(self, form):
-        if self.request.user.role == RoleUser.MEMBER:
+        if self.request.user.role == RoleUser.SANTRI:
             form.instance.user = self.request.user
         print(form.instance.user)
         return super().form_valid(form)

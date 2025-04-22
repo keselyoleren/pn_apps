@@ -18,7 +18,7 @@ class CertificateListView(IsPublicAuth, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         
-        if self.request.user.role == RoleUser.MEMBER:
+        if self.request.user.role == RoleUser.SANTRI:
             queryset = queryset.filter(user=self.request.user)
         
         # Search functionality
@@ -66,7 +66,7 @@ class CertificateCreateView(IsPublicAuth, CreateView):
     def get_form_class(self):
         user = self.request.user
         
-        if user.role == RoleUser.MEMBER:
+        if user.role == RoleUser.SANTRI:
             return CertificateForm
         else: 
             return SuperUserCertificateForm
@@ -78,7 +78,7 @@ class CertificateCreateView(IsPublicAuth, CreateView):
         return context
 
     def form_valid(self, form):
-        if self.request.user.role == RoleUser.MEMBER:
+        if self.request.user.role == RoleUser.SANTRI:
             form.instance.user = self.request.user
         return super().form_valid(form)
 
@@ -90,7 +90,7 @@ class CertificateUpdateView(IsPublicAuth, UpdateView):
     def get_form_class(self):
         user = self.request.user
         
-        if user.role == RoleUser.MEMBER:
+        if user.role == RoleUser.SANTRI:
             return CertificateForm
         else: 
             return SuperUserCertificateForm
@@ -102,7 +102,7 @@ class CertificateUpdateView(IsPublicAuth, UpdateView):
         return context
     
     def form_valid(self, form):
-        if self.request.user.role == RoleUser.MEMBER:
+        if self.request.user.role == RoleUser.SANTRI:
             form.instance.user = self.request.user
         return super().form_valid(form)
 

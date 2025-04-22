@@ -2,7 +2,8 @@ from django.db.models import TextChoices
 
 class RoleUser(TextChoices):
     ADMIN = 'admin'
-    MEMBER = 'member'
+    SANTRI = 'santri'
+    PELATIH = 'pelatih'
     PAC = 'pac'
     PC = 'pc'
     
