@@ -8,6 +8,11 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from users.models import AccountUser
 
 # Create your models here.
+class Perguruan(BaseModel):
+    nama = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self) -> str:
+        return self.nama
 
 class Members(BaseModel):
     user = models.OneToOneField(AccountUser, on_delete=models.CASCADE, blank=True, null=True)
@@ -29,7 +34,7 @@ class Members(BaseModel):
     pas_photo = models.ImageField("Pas Photo", upload_to="members/pas_photo", blank=True, null=True)
     ktp = models.ImageField("KTP", upload_to="members/ktp", blank=True, null=True)
 
-
+    perguruan = models.ForeignKey(Perguruan, on_delete=models.CASCADE, blank=True, null=True)
     nama_pelatih = models.CharField("Nama Pelatih", max_length=100, blank=True, null=True)
     unit_latihan = models.CharField("Unit Latihan", max_length=100, blank=True, null=True)
     provinsi_latihan = models.CharField("Provinsi Latihan", max_length=100, blank=True, null=True)

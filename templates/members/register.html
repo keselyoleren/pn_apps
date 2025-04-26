@@ -123,7 +123,7 @@
                                     <h5 class="mb-4">Data Diri & Alamat</h5>
                                     
                                     {% for fields in form.visible_fields %}
-                                        {% if fields.name != 'nama_pelatih' and fields.name != 'unit_latihan' and fields.name != 'provinsi_latihan' and fields.name != 'kabupaten_latihan' and fields.name != 'kecamatan_latihan' and fields.name != 'kelurahan_latihan' and fields.name != 'is_pelatih' %}
+                                        {% if fields.name != 'nama_pelatih' and fields.name != 'unit_latihan' and fields.name != 'provinsi_latihan' and fields.name != 'kabupaten_latihan' and fields.name != 'kecamatan_latihan' and fields.name != 'kelurahan_latihan' and fields.name != 'is_pelatih' and fields.name != 'perguruan' %}
                                         <div class="form-group">
                                             <div class="row">
                                                 <label class="col-sm-2 text-left text-gray-800" for="{{ fields.label_tag.id }}">
@@ -174,7 +174,7 @@
                                     <h5 class="mb-4">Unit Latihan</h5>
                                     
                                     {% for fields in form.visible_fields %}
-                                        {% if fields.name == 'nama_pelatih' or fields.name == 'unit_latihan' or fields.name == 'provinsi_latihan' or fields.name == 'kabupaten_latihan' or fields.name == 'kecamatan_latihan' or fields.name == 'kelurahan_latihan' %}
+                                        {% if fields.name == 'nama_pelatih' or fields.name == 'unit_latihan' or fields.name == 'provinsi_latihan' or fields.name == 'kabupaten_latihan' or fields.name == 'kecamatan_latihan' or fields.name == 'kelurahan_latihan' or fields.name == 'perguruan' %}
                                         <div class="form-group">
                                             <div class="row">
                                                 <label class="col-sm-2 text-left text-gray-800" for="{{ fields.label_tag.id }}">

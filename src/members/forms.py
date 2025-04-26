@@ -1,6 +1,6 @@
 from config.form import AbstractForm
 from config.request import get_user
-from members.models import IKT, Members, Sertifikat
+from members.models import IKT, Members, Perguruan, Sertifikat
 from django import forms
 from django.utils import timezone
 
@@ -102,4 +102,9 @@ class SuperUserCertificateForm(forms.ModelForm):
 class CertificateForm(AbstractForm):
     class Meta:
         model = Sertifikat
+        fields = '__all__'
+
+class PerguruanForm(AbstractForm):
+    class Meta:
+        model = Perguruan
         fields = '__all__'
