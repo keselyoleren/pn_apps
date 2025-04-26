@@ -232,3 +232,18 @@ class MemberDetailView(IsPublicAuth, DetailView):
         context['header'] = 'Anggota'
         context['header_title'] = 'Detail Anggota'
         return context
+    
+def pelatih_cabang_list(request):
+    search = request.GET.get('search', '')
+    queryset = Members.objects.filter(
+        user__role=RoleUser.PELATIH_CABANG, 
+        nama__icontains=search
+    )
+
+    results = []
+    for member in queryset[:10]:  # limit hasil supaya ringan
+        results.append({
+            'nama': member.nama,
+        })
+
+    return JsonResponse(results, safe=False)

@@ -36,4 +36,8 @@ urlpatterns = [
         path('delete/<uuid:pk>/', PerguruanDeleteView.as_view(), name='perguruan-delete'),
     ])),
 
+    path("api/", include([
+        path('search/pelatih-cabang/', pelatih_cabang_list, name='pelatih_cabang_list'),
+    ]))
+    
 ]

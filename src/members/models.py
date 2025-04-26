@@ -41,11 +41,6 @@ class Members(BaseModel):
     kabupaten_latihan = models.CharField("Kabupaten Latihan", max_length=100, blank=True, null=True)
     kecamatan_latihan = models.CharField("Kecamatan Latihan", max_length=100, blank=True, null=True)
     kelurahan_latihan = models.CharField("Kelurahan Latihan", max_length=100, blank=True, null=True)
-    
-    is_pelatih = models.BooleanField("Pelatih", default=False)
-
-    
-
 
     class Meta:
         verbose_name = "Anggota"

@@ -1,3 +1,4 @@
+from config.choice import RoleUser
 from config.form import AbstractForm
 from config.request import get_user
 from members.models import IKT, Members, Perguruan, Sertifikat
@@ -8,7 +9,7 @@ from django.utils import timezone
 
 class MembersForm(AbstractForm):
     nama_pelatih = forms.ModelChoiceField(
-        queryset=Members.objects.filter(is_pelatih=True),
+        queryset=Members.objects.filter(user__role__in=[RoleUser.PELATIH_CABANG]),
         required=False,
         label="Nama Pelatih",
         widget=forms.Select(attrs={'class': 'form-control'})

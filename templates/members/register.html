@@ -206,6 +206,12 @@
                                                                 <option value="{{ fields.value }}" selected>{{ fields.value }}</option>
                                                             {% endif %}
                                                         </select>
+                                                    {% elif fields.name == 'nama_pelatih' %}
+                                                        <select name="{{ fields.nama_pelatih }}" id="id_{{ fields.nama_pelatih }}" class="form-control select2-pelatih" style="width: 100%;">
+                                                            {% if fields.value %}
+                                                                <option value="{{ fields.value }}" selected>{{ fields.value }}</option>
+                                                            {% endif %}
+                                                        </select>
                                                     {% else %}
                                                         {{ fields }}
                                                     {% endif %}
@@ -303,7 +309,39 @@
             });
         });
     </script>
-
+    <script>
+        $(document).ready(function() {
+            $('.select2-pelatih').select2({
+                theme: 'bootstrap',
+                width: '100%',
+                placeholder: 'search pelatih',
+                allowClear: true,
+                ajax: {
+                    url: '/api/search/pelatih-cabang/',   // nanti kita buat API ini
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            search: params.term, // kata kunci pencarian
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.map(function(item) {
+                                return {
+                                    id: item.nama,    // Use nama as both ID and text
+                                    text: item.nama
+                                };
+                            })
+                        };
+                    },
+                    cache: true
+                },
+                placeholder: 'Cari Nama Pelatih',
+                minimumInputLength: 2,
+            });
+        });
+    </script>
     <!-- Script untuk form wilayah bertingkat -->
     <script>
         $(document).ready(function() {
