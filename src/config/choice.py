@@ -3,7 +3,7 @@ from django.db.models import TextChoices
 class RoleUser(TextChoices):
     ADMIN = 'admin'
     SANTRI = 'santri'
-    PELATIH = 'pelatih'
+    PELATIH_CABANG = 'pelatih cabang'
     PAC = 'pac'
     PC = 'pc'
     
@@ -20,3 +20,4 @@ class Status(TextChoices):
     DISETUJUI_ADMIN_WILAYAH = 'disetujui admin wilayah'
     DISETUJUI_ADMIN_PAC = 'disetujui admin pac'
     DITOLAK = 'ditolak'
+
