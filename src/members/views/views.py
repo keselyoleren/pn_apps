@@ -101,7 +101,25 @@ class MemebersAdminCreateView(IsPublicAuth, CreateView):
         return context
 
     def form_valid(self, form):
-        return  super().form_valid(form)
+        response =  super().form_valid(form)
+        email = form.cleaned_data.get('email')
+        nik = form.cleaned_data.get('nik')
+        user, created = AccountUser.objects.get_or_create(
+            username=nik, 
+            email=email,
+            first_name=form.cleaned_data.get('nama'),
+            role=RoleUser.SANTRI,
+            kabupaten=form.cleaned_data.get('kabupaten'),
+            wilayah=form.cleaned_data.get('kecamatan'),
+            defaults={'email': email}
+        )
+        # set password
+        user.set_password("pagarnusabwi1985.1986")
+        user.save()
+        self.object.user = user
+        self.object.save()
+        messages.success(self.request, "Registrasi berhasil, silahkan login dengan username dengan 'NIK' anda dan password 'pagarnusabwi1985.1986'")
+        return response
         
 
 class MembersListView(IsPublicAuth, ListView):
