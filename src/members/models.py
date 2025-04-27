@@ -16,6 +16,7 @@ class Perguruan(BaseModel):
 
 class Members(BaseModel):
     user = models.OneToOneField(AccountUser, on_delete=models.CASCADE, blank=True, null=True)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True)
     nik = models.CharField("NIK", max_length=50, unique=True)
     email = models.EmailField("Email", max_length=50, unique=True)
     nama = models.CharField("Nama Lengkap", max_length=200)
@@ -31,8 +32,8 @@ class Members(BaseModel):
     kelurahan = models.CharField("Kelurahan", max_length=100, blank=True, null=True)
     alamat = models.CharField("Alamat Rumah", max_length=200, blank=True, null=True)
 
-    pas_photo = models.ImageField("Pas Photo", upload_to="members/pas_photo", blank=True, null=True)
-    ktp = models.ImageField("KTP", upload_to="members/ktp", blank=True, null=True)
+    pas_photo = models.ImageField("Pas Photo", upload_to="members/pas_photo")
+    ktp = models.ImageField("KTP", upload_to="members/ktp")
 
     perguruan = models.ForeignKey(Perguruan, on_delete=models.CASCADE, blank=True, null=True)
     nama_pelatih = models.CharField("Nama Pelatih", max_length=100, blank=True, null=True)

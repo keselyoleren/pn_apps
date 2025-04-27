@@ -68,7 +68,7 @@ class ChangePasswordAdminView(IsAuthenticated, PasswordChangeView):
     form_class = AdminPasswordChangeForm
 
     def get_success_url(self):
-        return '/admin-panel/dashboard'
+        return '/'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

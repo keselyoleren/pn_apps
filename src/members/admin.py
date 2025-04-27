@@ -11,7 +11,7 @@ class AdminMember(admin.ModelAdmin):
 
     fieldsets = (
         (None, {
-            'fields': ('user', 'nik', 'email', 'nama', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'no_hp', 'is_pelatih')
+            'fields': ('user', 'nik', 'email', 'nama', 'tempat_lahir', 'tgl_lahir', 'jenis_kelamin', 'no_hp', 'parent')
         }),
         ('Lokasi', {
             'fields': ('provinsi', 'kabupaten', 'kecamatan', 'kelurahan')

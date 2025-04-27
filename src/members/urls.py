@@ -36,6 +36,10 @@ urlpatterns = [
         path('delete/<uuid:pk>/', PerguruanDeleteView.as_view(), name='perguruan-delete'),
     ])),
 
+    path('bulk-upload/', MembersBulkUploadView.as_view(), name='member-bulk-upload'),
+    path('download-template/', DownloadMemberTemplateView.as_view(), name='download-member-template'),
+
+
     path("api/", include([
         path('search/pelatih-cabang/', pelatih_cabang_list, name='pelatih_cabang_list'),
     ]))

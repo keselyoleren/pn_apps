@@ -8,12 +8,6 @@ from django.utils import timezone
 
 
 class MembersForm(AbstractForm):
-    nama_pelatih = forms.ModelChoiceField(
-        queryset=Members.objects.filter(user__role__in=[RoleUser.PELATIH_CABANG]),
-        required=False,
-        label="Nama Pelatih",
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
     class Meta:
         model = Members
         fields = '__all__'  
@@ -109,3 +103,12 @@ class PerguruanForm(AbstractForm):
     class Meta:
         model = Perguruan
         fields = '__all__'
+
+class BulkUploadForm(forms.Form):
+    excel_file = forms.FileField(label='Excel File', help_text='Upload an Excel file with member data')
+    
+    def clean_excel_file(self):
+        file = self.cleaned_data['excel_file']
+        if not file.name.endswith(('.xls', '.xlsx')):
+            raise forms.ValidationError("Only Excel files are allowed")
+        return file
