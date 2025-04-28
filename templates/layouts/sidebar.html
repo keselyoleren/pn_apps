@@ -17,16 +17,30 @@
         background: rgba(255, 255, 255, 0.3);
         border-radius: 5px;
     }
+
+    .sidebar-brand-icon {
+        display: none;
+    }
+
+    /* Ketika sidebar di-toggle: icon dimunculkan */
+    body.sidebar-toggled .sidebar-brand-icon {
+        display: flex; /* atau block, tergantung layout */
+        justify-content: center; /* opsional: untuk rapikan gambar */
+        align-items: center;
+    }
 </style>
 
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
-        <div class="sidebar-brand-icon">
-            <img src="https://salam.pagarnusa.or.id/assets/images/logo/logo.svg" width="50" alt="">
+        <div class="sidebar-brand-icon" >
+            <img src="{% static 'sb/img/logo/s_logo_white.png' %}" width="50" alt="">
         </div>
-        <div class="sidebar-brand-text mx-3">Pagarnusa </div>
+        <div class="sidebar-brand-text mx-3">
+            <img src="{% static 'sb/img/logo/logo_white.png' %}" width="150" alt="">
+        </div>
     </a>
+
     
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
