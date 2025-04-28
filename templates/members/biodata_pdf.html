@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Biodata Template</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            font-size: 10pt;
+        }
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        .header-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+        }
+        .photo-cell {
+            width: 120px;
+            vertical-align: middle;
+            text-align: center;
+            padding: 5px;
+        }
+        .photo-container {
+            width: 120px;
+            height: 160px;
+            border: 1px solid #999;
+        }
+        .photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            background-color: #f0f0f0;
+            font-size: 9pt;
+        }
+        .img-thumbnail {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .section {
+            margin-bottom: 20px;
+            page-break-inside: avoid;
+        }
+        .section h2 {
+            font-size: 12pt;
+            margin: 10px 0 5px 0;
+            padding-bottom: 3px;
+            border-bottom: 1px solid #ddd;
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+        }
+        .info-label {
+            width: 30%;
+            font-weight: bold;
+            vertical-align: top;
+            padding: 3px 5px;
+        }
+        .info-value {
+            width: 70%;
+            vertical-align: top;
+            padding: 3px 5px;
+        }
+        .signature {
+            margin-top: 40px;
+            text-align: right;
+        }
+        .signature-line {
+            width: 200px;
+            display: inline-block;
+            border-bottom: 1px solid #333;
+            margin-bottom: 5px;
+        }
+        .page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <table class="header-table">
+            <tr>
+                <td>
+                    <h1 style="margin:0;font-size:14pt;text-transform:uppercase;">{{member.nama}}</h1>
+                    <p style="margin:5px 0 0 0;">{{member.nik}}</p>
+                </td>
+                <td class="photo-cell">
+                    <div class="photo-container">
+                        {% if member.pas_photo %}
+                            <img src="{{host}}{{member.pas_photo.url}}" class="img-thumbnail" style="width:100%;height:100%;object-fit:cover;">
+                        {% else %}
+                            <div class="photo-placeholder">Photo<br>3x4 cm</div>
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <div class="section">
+            <h2>Biodata Santri</h2>
+            <table class="info-table">
+                <tr>
+                    <td class="info-label">Nama Lengkap</td>
+                    <td class="info-value">{{ member.nama }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">NIK</td>
+                    <td class="info-value">{{ member.nik }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Tempat/Tanggal Lahir</td>
+                    <td class="info-value">{{ member.tempat_lahir }}, {{ member.tgl_lahir|date:"d F Y" }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Jenis Kelamin</td>
+                    <td class="info-value">{{ member.get_jenis_kelamin_display }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Email</td>
+                    <td class="info-value">{{ member.email }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Nomor HP</td>
+                    <td class="info-value">{{ member.no_hp|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Alamat</td>
+                    <td class="info-value">
+                        {% if member.kelurahan or member.kecamatan or member.kabupaten or member.provinsi %}
+                            {{ member.kelurahan|default:"" }}, {{ member.kecamatan|default:"" }}, 
+                            {{ member.kabupaten|default:"" }}, {{ member.provinsi|default:"" }}
+                            {{ member.alamat|default:"" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <h2>Unit Latihan</h2>
+            <table class="info-table">
+                <tr>
+                    <td class="info-label">Unit Latihan</td>
+                    <td class="info-value">{{ member.unit_latihan|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Perguruan</td>
+                    <td class="info-value">{{ member.perguruan|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Tahun Bergabung</td>
+                    <td class="info-value">{{ member.thn_gabung|date:"d F Y"|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Nama Pelatih</td>
+                    <td class="info-value">{{ member.nama_pelatih|default:"-" }}</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Alamat Unit</td>
+                    <td class="info-value">
+                        {% if member.kelurahan_latihan or member.kecamatan_latihan or member.kabupaten_latihan or member.provinsi_latihan %}
+                            {{ member.kelurahan_latihan|default:"" }}, {{ member.kecamatan_latihan|default:"" }}, 
+                            {{ member.kabupaten_latihan|default:"" }}, {{ member.provinsi_latihan|default:"" }}
+                            {{ member.alamat|default:"" }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="signature">
+            <p>----------</p>
+            <div class="signature-line"></div>
+            <p>-----ttd------</p>
+        </div>
+    </div>
+</body>
+</html>

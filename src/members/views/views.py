@@ -12,11 +12,17 @@ from users.models import AccountUser
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.views.generic import FormView
+from django.template.loader import get_template
+from django.http import HttpResponse
+
 import pandas as pd
 from io import BytesIO
 
 from django.db.models import Count, Q
 from django.http import HttpResponse, JsonResponse
+
+from xhtml2pdf import pisa
+
 
 def anggota_stats(request):
     # Data untuk card summary
@@ -267,6 +273,34 @@ class MemberDetailView(IsPublicAuth, DetailView):
         context['header'] = 'Anggota'
         context['header_title'] = 'Detail Anggota'
         return context
+    
+class MemberPDFView(IsPublicAuth, DetailView):
+    model = Members
+    template_name = 'members/biodata_pdf.html'  # ini template khusus pdf
+    context_object_name = 'member'
+
+    def get(self, request, *args, **kwargs):
+        member = self.get_object()
+        template_path = self.template_name
+        context = {
+            'member': member,
+            'header': 'Anggota',
+            'header_title': 'Detail Anggota (PDF)',
+            'host':f"{self.request.scheme}://{self.request.get_host()}"
+        }
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename="member_{member.nama}.pdf"'
+
+        # Render HTML ke string
+        template = get_template(template_path)
+        html = template.render(context)
+
+        # Create PDF
+        pisa_status = pisa.CreatePDF(html, dest=response)
+
+        if pisa_status.err:
+            return HttpResponse('Terjadi error saat membuat PDF', status=500)
+        return response
     
 def pelatih_cabang_list(request):
     search = request.GET.get('search', '')

@@ -12,6 +12,7 @@ urlpatterns = [
         path('update/<uuid:pk>/', MembersUpdateView.as_view(), name='member-update'),
         path('detail/<uuid:pk>/', MemberDetailView.as_view(), name='member-detail'),
         path('delete/<uuid:pk>/', MembersDeleteView.as_view(), name='member-delete'),
+        path('download/<uuid:pk>/', MemberPDFView.as_view(), name='member-download'),
     ])),
 
     path("ikt/", include([
